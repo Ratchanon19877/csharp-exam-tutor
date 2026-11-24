@@ -1,0 +1,2999 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C# Exam Tutor — ติวเข้มเขียนโปรแกรม C# (2-Day Intensive)</title>
+<style>
+  :root {
+    --bg-dark: #090e1a;
+    --bg-panel: #0f172a;
+    --bg-card: #162036;
+    --bg-card-hover: #1e293b;
+    --navy-primary: #1e3a5f;
+    --steel-blue: #4682b4;
+    --steel-light: #6495ed;
+    --accent-cyan: #38bdf8;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: #27354f;
+    --code-bg: #070b14;
+    --sidebar-w: 280px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.65;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-dark); }
+  ::-webkit-scrollbar-thumb { background: var(--navy-primary); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--steel-blue); }
+
+  /* Sidebar */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: linear-gradient(180deg, #0b1222 0%, #0f192d 100%);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(30, 58, 95, 0.25);
+  }
+
+  .brand-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .progress-box {
+    margin-top: 14px;
+    background: var(--bg-dark);
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 8px;
+    background: #1e293b;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--steel-blue), var(--accent-cyan));
+    width: 0%;
+    transition: width 0.4s ease;
+  }
+
+  .nav-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 10px;
+  }
+
+  .nav-group-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--steel-blue);
+    padding: 10px 12px 4px;
+    font-weight: 700;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    margin: 3px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .nav-item:hover {
+    background: var(--bg-card);
+    color: var(--text-main);
+  }
+
+  .nav-item.active {
+    background: linear-gradient(90deg, rgba(70, 130, 180, 0.25), rgba(56, 189, 248, 0.1));
+    color: var(--accent-cyan);
+    border-color: rgba(70, 130, 180, 0.4);
+    font-weight: 600;
+  }
+
+  .nav-badge {
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 12px;
+    background: var(--bg-dark);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+  }
+
+  .nav-item.done .nav-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--accent-emerald);
+    border-color: rgba(16, 185, 129, 0.4);
+  }
+
+  /* Main Layout */
+  .main-wrapper {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .menu-toggle {
+    display: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .search-container {
+    position: relative;
+    flex: 1;
+    max-width: 480px;
+  }
+
+  .search-input {
+    width: 100%;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 9px 14px 9px 36px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus {
+    border-color: var(--accent-cyan);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+  }
+
+  .search-results {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    background: var(--bg-panel);
+    border: 1px solid var(--steel-blue);
+    border-radius: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    display: none;
+    z-index: 1100;
+  }
+
+  .search-result-item {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+  }
+
+  .search-result-item:hover {
+    background: var(--bg-card);
+  }
+
+  .search-result-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--accent-cyan);
+  }
+
+  .search-result-snippet {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Content Container */
+  .content-area {
+    padding: 28px 32px 60px;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .section-view {
+    display: none;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .section-view.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Typography & Cards */
+  .hero-banner {
+    background: linear-gradient(135deg, #132544 0%, #1e3a5f 60%, #274c77 100%);
+    border: 1px solid rgba(70, 130, 180, 0.5);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .hero-banner h1 {
+    font-size: 1.75rem;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .hero-banner p {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 18px;
+  }
+
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+  }
+
+  /* Code Blocks */
+  .code-wrapper {
+    position: relative;
+    margin: 14px 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #263652;
+    background: var(--code-bg);
+  }
+
+  .code-header {
+    background: #111b2e;
+    padding: 7px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid #1e2d47;
+  }
+
+  .copy-btn {
+    background: var(--navy-primary);
+    color: #e2e8f0;
+    border: 1px solid var(--steel-blue);
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 0.74rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .copy-btn:hover { background: var(--steel-blue); }
+
+  pre {
+    padding: 15px;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #e2e8f0;
+  }
+
+  .kw { color: #569cd6; font-weight: bold; }
+  .type { color: #4ec9b0; }
+  .str { color: #ce9178; }
+  .num { color: #b5cea8; }
+  .cmt { color: #6a9955; font-style: italic; }
+  .mth { color: #dcdcaa; }
+
+  .output-box {
+    background: #05080f;
+    border-left: 4px solid var(--accent-emerald);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    font-family: 'Consolas', monospace;
+    font-size: 0.86rem;
+    color: #a7f3d0;
+    margin: 10px 0;
+    white-space: pre-wrap;
+  }
+
+  .callout {
+    padding: 14px 16px;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 0.92rem;
+  }
+
+  .callout-tip {
+    background: rgba(56, 189, 248, 0.1);
+    border-left: 4px solid var(--accent-cyan);
+  }
+
+  .callout-warn {
+    background: rgba(244, 63, 94, 0.1);
+    border-left: 4px solid var(--accent-rose);
+  }
+
+  .callout-exam {
+    background: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid var(--accent-amber);
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 0.88rem;
+  }
+
+  th, td {
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+  }
+
+  th {
+    background: var(--navy-primary);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  tr:nth-child(even) { background: rgba(15, 23, 42, 0.5); }
+
+  /* Buttons */
+  .btn {
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary {
+    background: var(--steel-blue);
+    color: #fff;
+    border-color: var(--steel-light);
+  }
+
+  .btn-primary:hover { background: #3a6f9c; }
+
+  .btn-success {
+    background: var(--accent-emerald);
+    color: #06281e;
+  }
+
+  .btn-success:hover { background: #0d9668; color: #fff; }
+
+  .btn-outline {
+    background: transparent;
+    border-color: var(--steel-blue);
+    color: var(--accent-cyan);
+  }
+
+  .btn-outline:hover { background: rgba(70, 130, 180, 0.2); }
+
+  .btn-danger {
+    background: rgba(244, 63, 94, 0.15);
+    border-color: var(--accent-rose);
+    color: var(--accent-rose);
+  }
+
+  .btn-danger:hover { background: var(--accent-rose); color: #fff; }
+
+  /* Flashcards */
+  .flashcard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .flashcard {
+    background: linear-gradient(145deg, #16233b, #0f1829);
+    border: 1px solid var(--steel-blue);
+    border-radius: 12px;
+    padding: 18px;
+    min-height: 170px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .fc-tag {
+    font-size: 0.72rem;
+    color: var(--accent-amber);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .fc-front {
+    font-size: 0.96rem;
+    font-weight: 600;
+    margin: 10px 0;
+  }
+
+  .fc-back {
+    display: none;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: #d1fae5;
+    margin-top: 8px;
+  }
+
+  .fc-back.visible { display: block; }
+
+  /* Chapter Quiz */
+  .quiz-item {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .quiz-opt {
+    display: block;
+    padding: 9px 12px;
+    margin: 6px 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: all 0.15s;
+  }
+
+  .quiz-opt:hover { border-color: var(--steel-blue); }
+  .quiz-opt input { margin-right: 8px; }
+
+  .quiz-feedback {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 7px;
+    font-size: 0.86rem;
+    display: none;
+  }
+
+  /* Bottom Navigation */
+  .chapter-nav-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* Mock Exam Specific */
+  .exam-sticky-bar {
+    position: sticky;
+    top: 58px;
+    z-index: 800;
+    background: #111d33;
+    border: 1px solid var(--steel-blue);
+    border-radius: 10px;
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+  }
+
+  .exam-stat {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .exam-stat span { color: var(--accent-cyan); font-size: 1.05rem; }
+
+  .exam-q-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+
+  .exam-q-card.correct-card { border-color: var(--accent-emerald); background: rgba(16, 185, 129, 0.06); }
+  .exam-q-card.wrong-card { border-color: var(--accent-rose); background: rgba(244, 63, 94, 0.06); }
+  .exam-q-card.unanswered-card { border-color: var(--accent-amber); background: rgba(245, 158, 11, 0.06); }
+
+  .missing-input {
+    background: var(--code-bg);
+    border: 1px solid var(--steel-blue);
+    color: var(--accent-cyan);
+    font-family: 'Consolas', monospace;
+    padding: 8px 12px;
+    border-radius: 6px;
+    width: 100%;
+    max-width: 420px;
+    font-size: 0.92rem;
+    margin-top: 8px;
+  }
+
+  /* Error Log Form */
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-size: 0.84rem; color: var(--text-muted); margin-bottom: 4px; }
+  .form-control {
+    width: 100%;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 9px 12px;
+    border-radius: 7px;
+    font-size: 0.9rem;
+  }
+
+  /* Checklist */
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+
+  .checklist-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-cyan);
+    cursor: pointer;
+  }
+
+  .checklist-item.checked span {
+    text-decoration: line-through;
+    color: var(--text-muted);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main-wrapper { margin-left: 0; }
+    .menu-toggle { display: inline-block; }
+    .content-area { padding: 20px 16px 50px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="brand-title">⚡ C# Exam Tutor</div>
+    <div class="brand-sub">ติวสอบเข้มข้น 2 วัน (Computer Programming)</div>
+    <div class="progress-box">
+      <div class="progress-label">
+        <span>ความคืบหน้าภาพรวม</span>
+        <span id="overall-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="overall-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-scroll">
+    <div class="nav-group-label">วางแผน & ภาพรวม</div>
+    <div class="nav-item active" data-target="sec-plan" onclick="navigateTo('sec-plan')">
+      <span>📅 แผนอ่านหนังสือ 2 วัน</span>
+      <span class="nav-badge" id="badge-plan">0/12</span>
+    </div>
+
+    <div class="nav-group-label">เนื้อหาหลัก 4 บท (จากเอกสาร PDF)</div>
+    <div class="nav-item" data-target="sec-loop" onclick="navigateTo('sec-loop')">
+      <span>1. Loop (การทำซ้ำ)</span>
+      <span class="nav-badge" id="badge-loop">เรียน</span>
+    </div>
+    <div class="nav-item" data-target="sec-method" onclick="navigateTo('sec-method')">
+      <span>2. Method (เน้นพิเศษ ★)</span>
+      <span class="nav-badge" id="badge-method">เรียน</span>
+    </div>
+    <div class="nav-item" data-target="sec-array" onclick="navigateTo('sec-array')">
+      <span>3. Array (เน้นพิเศษ ★)</span>
+      <span class="nav-badge" id="badge-array">เรียน</span>
+    </div>
+    <div class="nav-item" data-target="sec-class" onclick="navigateTo('sec-class')">
+      <span>4. Class & OOP</span>
+      <span class="nav-badge" id="badge-class">เรียน</span>
+    </div>
+
+    <div class="nav-group-label">ฝึกทักษะ & ทบทวน</div>
+    <div class="nav-item" data-target="sec-tracing" onclick="navigateTo('sec-tracing')">
+      <span>🔍 Code Tracing (อ่านโค้ด)</span>
+      <span class="nav-badge">6 โจทย์</span>
+    </div>
+    <div class="nav-item" data-target="sec-cheatsheet" onclick="navigateTo('sec-cheatsheet')">
+      <span>📌 Cheat Sheet ก่อนสอบ</span>
+      <span class="nav-badge">สรุป</span>
+    </div>
+    <div class="nav-item" data-target="sec-errorlog" onclick="navigateTo('sec-errorlog')">
+      <span>📓 Error Log บันทึกจุดพลาด</span>
+      <span class="nav-badge" id="badge-err">0</span>
+    </div>
+
+    <div class="nav-group-label">สนามสอบจำลอง</div>
+    <div class="nav-item" data-target="sec-mock" onclick="navigateTo('sec-mock')">
+      <span>🎯 Mock Exam (90 ข้อ)</span>
+      <span class="nav-badge" id="badge-mock">90 ข้อ</span>
+    </div>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<div class="main-wrapper">
+  <header class="topbar">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰ เมนู</button>
+    <div class="search-container">
+      <span class="search-icon">🔎</span>
+      <input type="text" class="search-input" id="global-search" placeholder="ค้นหาเนื้อหา เช่น foreach, return, GetLength, Constructor, property..." oninput="handleSearch(this.value)">
+      <div class="search-results" id="search-results"></div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline" style="padding:6px 12px; font-size:0.8rem;" onclick="resetAllProgress()">รีเซ็ตข้อมูล</button>
+    </div>
+  </header>
+
+  <main class="content-area">
+
+    <!-- ==================== SECTION 0: 2-DAY STUDY PLAN ==================== -->
+    <section id="sec-plan" class="section-view active">
+      <div class="hero-banner">
+        <span class="hero-tag">INTENSIVE 2-DAY EXAM PREP • C# PROGRAMMING</span>
+        <h1>ติวสอบ Computer Programming ภาษา C# ภายใน 2 วัน</h1>
+        <p>สรุปเนื้อหาเข้มข้นตรงตามสไลด์เรียน ครบทั้ง 4 บท (Loop, Method, Array, Class) พร้อมเจาะลึกจุดออกสอบบ่อย ระบบฝึกไล่โค้ด (Code Tracing) และข้อสอบจำลองเสมือนจริง 90 ข้อ</p>
+      </div>
+
+      <div class="grid-4" style="margin-bottom: 22px;">
+        <div class="card" style="margin-bottom:0; text-align:center;">
+          <div style="font-size:1.6rem; font-weight:700; color:var(--accent-cyan);" id="stat-chapters">0 / 4</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">บทเรียนที่อ่านจบแล้ว</div>
+        </div>
+        <div class="card" style="margin-bottom:0; text-align:center;">
+          <div style="font-size:1.6rem; font-weight:700; color:var(--accent-emerald);" id="stat-fc">0 / 6</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">Flashcards ที่ทบทวนแล้ว</div>
+        </div>
+        <div class="card" style="margin-bottom:0; text-align:center;">
+          <div style="font-size:1.6rem; font-weight:700; color:var(--accent-amber);" id="stat-quiz">0 / 16</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">แบบฝึกหัดท้ายบท</div>
+        </div>
+        <div class="card" style="margin-bottom:0; text-align:center;">
+          <div style="font-size:1.6rem; font-weight:700; color:var(--steel-light);" id="stat-mock">- / 90</div>
+          <div style="font-size:0.82rem; color:var(--text-muted);">คะแนน Mock Exam ล่าสุด</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📘 Day 1: Understand & Practice</div>
+          </div>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:12px;">เน้นทำความเข้าใจโครงสร้างภาษา Syntax และฝึกเขียนทีละบท โดยเฉพาะ Method และ Array</p>
+          <div id="checklist-day1"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🔥 Day 2: Exam Preparation</div>
+          </div>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:12px;">เน้นเชื่อมโยงหลายบท ฝึกอ่านผลลัพธ์โค้ด เติมโค้ดที่หายไป และทำข้อสอบ 90 ข้อจับเวลา</p>
+          <div id="checklist-day2"></div>
+        </div>
+      </div>
+
+      <div class="chapter-nav-footer">
+        <div></div>
+        <button class="btn btn-primary" onclick="navigateTo('sec-loop')">เริ่มเรียนบทที่ 1: Loop →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 1: LOOP ==================== -->
+    <section id="sec-loop" class="section-view">
+      <div class="hero-banner">
+        <span class="hero-tag">บทที่ 1 • ITERATION STATEMENTS</span>
+        <h1>Loop (คำสั่งทำซ้ำใน C#)</h1>
+        <p>เข้าใจกลไก Pretest vs Posttest Loop, Components of Loop, Jump Statements (break/continue), Infinite Loop และ Nested Loop</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">1. แนวคิดหลักและองค์ประกอบของ Loop (Components of Loop)</div>
+        </div>
+        <p>ในเอกสารเรียนแบ่ง <strong>Iteration Statements</strong> ออกเป็น 3 กลุ่มหลัก ได้แก่:</p>
+        <ul style="margin: 10px 0 14px 22px;">
+          <li><strong>Conditional iteration:</strong> ทำซ้ำตามเงื่อนไข ได้แก่ <code>while</code> และ <code>do...while</code></li>
+          <li><strong>Definite iteration:</strong> ทำซ้ำตามจำนวนรอบที่แน่นอน ได้แก่ <code>for</code></li>
+          <li><strong>Traversing items in a collection:</strong> วนอ่านสมาชิกทีละตัวใน Array/Collection ได้แก่ <code>foreach</code></li>
+        </ul>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ประเภทการทดสอบเงื่อนไข</th>
+              <th>คำสั่ง Loop</th>
+              <th>หลักการทำงานสำคัญ (ออกสอบบ่อย!)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pretest Loop</strong><br>(ตรวจสอบเงื่อนไขก่อนทำ)</td>
+              <td><code>for</code>, <code>while</code>, <code>foreach</code></td>
+              <td>เช็กเงื่อนไข <strong>ก่อน</strong> เริ่มทำงานในรอบนั้น หากเป็น <code>false</code> ตั้งแต่แรก จะ<strong>ไม่ทำงานเลย (0 รอบ)</strong></td>
+            </tr>
+            <tr>
+              <td><strong>Posttest Loop</strong><br>(ทำงานก่อนตรวจสอบเงื่อนไข)</td>
+              <td><code>do...while</code></td>
+              <td>ทำงานในบล็อก <code>do { ... }</code> <strong>ก่อนอย่างน้อย 1 รอบเสมอ</strong> แล้วค่อยเช็กเงื่อนไขที่ <code>while(...);</code> (อย่าลืมเครื่องหมาย <code>;</code> ปิดท้าย!)</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-tip">
+          <strong>3 องค์ประกอบบังคับของ Loop (START - STOP - STEP):</strong><br>
+          1. <strong>Initialization (START):</strong> จุดเริ่มต้นของตัวแปรควบคุมลูป (เช่น <code>int i = 1;</code>)<br>
+          2. <strong>Condition (STOP):</strong> เงื่อนไขในการทำงานต่อ หากเป็นจริง (True) ทำต่อ หากเป็นเท็จ (False) หยุดลูป<br>
+          3. <strong>Counter / Updating step (STEP):</strong> การปรับค่าตัวแปรควบคุมลูป (เช่น <code>i++</code> หรือ <code>i--</code>) เพื่อไม่ให้เกิด Infinite Loop
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">2. Syntax และรูปแบบการเขียนโค้ดทั้ง 4 แบบ</div>
+        </div>
+
+        <div class="code-wrapper">
+          <div class="code-header"><span>C# Loop Syntax & ตัวอย่างการทำงานจริง</span><button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button></div>
+          <pre><span class="kw">using</span> System;
+
+<span class="kw">public class</span> <span class="type">LoopDemo</span> {
+    <span class="kw">public static void</span> <span class="mth">Main</span>() {
+        <span class="cmt">// 1. for loop (Pretest - Definite)</span>
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">1</span>; i &lt;= <span class="num">3</span>; i++) {
+            Console.<span class="mth">Write</span>(i + <span class="str">" "</span>);
+        }
+        Console.<span class="mth">WriteLine</span>();
+
+        <span class="cmt">// 2. while loop (Pretest - Conditional)</span>
+        <span class="kw">int</span> w = <span class="num">10</span>;
+        <span class="kw">while</span> (w &lt; <span class="num">5</span>) { <span class="cmt">// เงื่อนไขเป็น false ตั้งแต่ต้น -> ไม่ทำงานเลย</span>
+            Console.<span class="mth">WriteLine</span>(<span class="str">"While run"</span>);
+            w++;
+        }
+
+        <span class="cmt">// 3. do...while loop (Posttest - ทำก่อน 1 รอบเสมอ)</span>
+        <span class="kw">int</span> d = <span class="num">10</span>;
+        <span class="kw">do</span> {
+            Console.<span class="mth">WriteLine</span>(<span class="str">"Do-While run once: d = "</span> + d);
+            d++;
+        } <span class="kw">while</span> (d &lt; <span class="num">5</span>); <span class="cmt">// ต้องมี ; ปิดท้ายเสมอ!</span>
+
+        <span class="cmt">// 4. foreach loop (Pretest - วนอ่าน Array ตั้งแต่ index 0 ถึง Length - 1)</span>
+        <span class="kw">int</span>[] scores = { <span class="num">80</span>, <span class="num">90</span>, <span class="num">100</span> };
+        <span class="kw">foreach</span> (<span class="kw">int</span> s <span class="kw">in</span> scores) {
+            Console.<span class="mth">Write</span>(s + <span class="str">" "</span>);
+        }
+    }
+}</pre>
+        </div>
+
+        <div class="output-box">1 2 3 
+Do-While run once: d = 10
+80 90 100 </div>
+
+        <p><strong>คำอธิบายโค้ดและผลลัพธ์ทีละส่วน:</strong></p>
+        <ul style="margin: 8px 0 0 22px;">
+          <li><code>for</code> วนตั้งแต่ <code>i = 1</code> ถึง <code>3</code> พิมพ์ <code>1 2 3 </code></li>
+          <li><code>while (w &lt; 5)</code> เนื่องจาก <code>w = 10</code> เงื่อนไขเป็นเท็จทันที จึงข้ามบล็อกนี้ไป</li>
+          <li><code>do...while</code> แม้ <code>d = 10</code> จะไม่น้อยกว่า 5 แต่เพราะเป็น <strong>Posttest</strong> จึงพิมพ์ <code>Do-While run once: d = 10</code> ออกมาก่อน 1 ครั้ง แล้วค่อยเช็กเงื่อนไขและจบการทำงาน</li>
+          <li><code>foreach</code> อ่านค่าจาก <code>scores</code> ทีละตัวเรียงจาก index <code>0</code> ไปจนถึง <code>Length - 1</code> (ข้อจำกัด: <strong>ไม่สามารถใช้แก้ไขค่าสมาชิกใน Array โดยตรงได้</strong>)</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">3. Jump Statements (break vs continue) และ Nested Loop</div>
+        </div>
+        <p><strong>Jump Statement</strong> ใช้ควบคุมการกระโดดข้ามในลูป:</p>
+        <ul style="margin: 8px 0 12px 22px;">
+          <li><code>break;</code> : <strong>หยุดและออกจากลูปทันที</strong> (Break out of the loop entirely)</li>
+          <li><code>continue;</code> : <strong>ข้ามคำสั่งที่เหลือในรอบปัจจุบัน</strong> แล้วกระโดดไปเช็กเงื่อนไข/อัปเดตค่าในรอบถัดไปทันที</li>
+        </ul>
+
+        <div class="callout callout-warn">
+          <strong>จุดหลอกในข้อสอบเรื่อง <code>continue</code> ใน <code>while</code> / <code>do...while</code>:</strong><br>
+          หากเขียน <code>i++;</code> ไว้ <em>หลัง</em> <code>continue;</code> ในลูป <code>while</code> เมื่อเจอ <code>continue</code> โปรแกรมจะข้าม <code>i++</code> ทำให้ค่า <code>i</code> ไม่เปลี่ยนและเกิด <strong>Infinite Loop</strong> ทันที! (ต่างจาก <code>for</code> ที่ส่วน <code>i++</code> ในหัวลูปยังทำงานเสมอ)
+        </div>
+
+        <div class="code-wrapper">
+          <div class="code-header"><span>ตัวอย่างจากสไลด์: break vs continue และ Nested Loop</span><button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button></div>
+          <pre><span class="cmt">// ตัวอย่าง Jump Statement จากสไลด์หน้า 12</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = -<span class="num">5</span>; i &lt;= <span class="num">5</span>; i++) {
+    <span class="kw">if</span> (i == <span class="num">0</span>) <span class="kw">break</span>;
+    Console.<span class="mth">Write</span>(i + <span class="str">" "</span>); <span class="cmt">// ผลลัพธ์: -5 -4 -3 -2 -1 (หยุดทันทีเมื่อ i == 0)</span>
+}
+
+<span class="kw">for</span> (<span class="kw">int</span> i = -<span class="num">5</span>; i &lt;= <span class="num">5</span>; i++) {
+    <span class="kw">if</span> (i == <span class="num">0</span>) <span class="kw">continue</span>;
+    Console.<span class="mth">Write</span>(i + <span class="str">" "</span>); <span class="cmt">// ผลลัพธ์: -5 -4 -3 -2 -1 1 2 3 4 5 (ข้ามเลข 0)</span>
+}
+
+<span class="cmt">// ตัวอย่าง Nested Loop (ลูปซ้อนลูป) จากสไลด์หน้า 14</span>
+<span class="cmt">// หลักการ: ลูปในทำงานครบทุกรอบก่อน ลูปนอกจึงขยับ 1 รอบ</span>
+<span class="kw">for</span> (<span class="kw">int</span> r = <span class="num">5</span>; r &gt;= <span class="num">1</span>; r--) {
+    <span class="kw">for</span> (<span class="kw">int</span> c = <span class="num">1</span>; c &lt;= r; c++) {
+        Console.<span class="mth">Write</span>(<span class="str">"x"</span>);
+    }
+    Console.<span class="mth">WriteLine</span>();
+}</pre>
+        </div>
+        <div class="output-box">xxxxx
+xxxx
+xxx
+xx
+x</div>
+
+        <div class="callout callout-exam">
+          <strong>เทคนิคจำและข้อผิดพลาดที่พบบ่อย:</strong><br>
+          • <strong>Infinite Loop เกิดจาก 3 สาเหตุ:</strong> 1) ลืมใส่ START, STOP หรือ STEP (เช่น <code>for(int i=1; i&lt;=10;)</code>) 2) ลำดับผิด/เงื่อนไขไม่ถึงจุดหยุด (เช่น <code>int i=1; while(i&gt;0) { i++; }</code>) 3) ตั้งใจเขียน (<code>while(true)</code> ซึ่งต้องมี <code>break</code>)<br>
+          • <strong>จำนวนรอบรวมของ Nested Loop</strong> = จำนวนรอบลูปนอก × จำนวนรอบลูปใน (กรณีรอบคงที่)
+        </div>
+      </div>
+
+      <!-- Chapter 1 Quiz -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📝 แบบฝึกหัดท้ายบทที่ 1: Loop</div>
+          <button class="btn btn-success" onclick="checkChapterQuiz('loop')">ตรวจคำตอบบทที่ 1</button>
+        </div>
+        <div id="quiz-container-loop"></div>
+      </div>
+
+      <div class="chapter-nav-footer">
+        <button class="btn btn-outline" onclick="navigateTo('sec-plan')">← กลับหน้าแผนอ่านหนังสือ</button>
+        <button class="btn btn-success" id="btn-complete-loop" onclick="toggleChapterComplete('loop')">✓ ทำเครื่องหมายว่าเรียนจบบทที่ 1</button>
+        <button class="btn btn-primary" onclick="navigateTo('sec-method')">บทถัดไป: Method →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 2: METHOD ==================== -->
+    <section id="sec-method" class="section-view">
+      <div class="hero-banner">
+        <span class="hero-tag">บทที่ 2 • เน้นพิเศษออกสอบหนัก ★</span>
+        <h1>Method (เมธอดและการส่งผ่านค่าใน C#)</h1>
+        <p>เจาะลึกโครงสร้าง Method 5 ส่วน, ประเภทของ Method ทั้ง 4 รูปแบบตาม Parameter และ Return Type, การเรียกใช้และการส่งค่ากลับ</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">1. แนวคิดและองค์ประกอบพื้นฐานของ Method (5 Components)</div>
+        </div>
+        <p><strong>Method</strong> คือกลุ่มของชุดคำสั่งที่รวมไว้ทำงานเฉพาะอย่าง ช่วยแบ่งโปรแกรมใหญ่ให้เป็นส่วนย่อย อ่านเข้าใจง่าย และนำกลับมาใช้ซ้ำได้ (Code Reuse) โดยชื่อ Method ควรตั้งเป็น<strong>คำกริยา (Verb)</strong> และขึ้นต้นด้วยตัวพิมพ์ใหญ่ (PascalCase)</p>
+
+        <div class="callout callout-warn">
+          <strong>กฎเหล็กตำแหน่งการสร้าง Method:</strong><br>
+          ต้องประกาศ Method <strong>ไว้นอก <code>Main()</code> แต่อยู่ภายใน <code>class</code> เดียวกัน</strong> (ห้ามซ้อน Method ไว้ใน Main) และหากเรียกใช้จาก <code>static void Main()</code> โดยไม่สร้าง Object จะต้องใส่คำว่า <code>static</code> กำกับด้วยเสมอ
+        </div>
+
+        <div class="code-wrapper">
+          <div class="code-header"><span>โครงสร้าง 5 ส่วนของ Method</span></div>
+          <pre><span class="cmt">// [1. Modifier] [static] [2. Return_Type] [3. Method_Name] ( [4. Parameter(s)] )</span>
+<span class="kw">public static int</span> <span class="mth">CalculateArea</span>(<span class="kw">int</span> width, <span class="kw">int</span> height)
+{
+    <span class="cmt">// [5. Method Body]</span>
+    <span class="kw">int</span> area = width * height;
+    <span class="kw">return</span> area; <span class="cmt">// ส่งค่าชนิด int กลับไปยังจุดที่เรียกใช้</span>
+}</pre>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ส่วนประกอบ</th>
+              <th>หน้าที่และรายละเอียด</th>
+              <th>ตัวอย่าง</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Modifier</strong></td>
+              <td>กำหนดสิทธิ์การเข้าถึง (Access Modifier)</td>
+              <td><code>public</code>, <code>private</code></td>
+            </tr>
+            <tr>
+              <td><strong>2. Return Type</strong></td>
+              <td>ชนิดข้อมูลที่ส่งกลับ ถ้า<strong>ไม่ส่งค่ากลับ</strong>ต้องใช้ <code>void</code></td>
+              <td><code>int</code>, <code>double</code>, <code>string</code>, <code>int[]</code>, <code>void</code></td>
+            </tr>
+            <tr>
+              <td><strong>3. Method Name</strong></td>
+              <td>ชื่อเมธอด แนะนำขึ้นต้นด้วยตัวใหญ่และเป็นคำกริยา</td>
+              <td><code>SayHi</code>, <code>GetNumMajor</code>, <code>Sum</code></td>
+            </tr>
+            <tr>
+              <td><strong>4. Parameter(s)</strong></td>
+              <td>ตัวแปรที่ประกาศในวงเล็บ <code>()</code> เพื่อรับค่าจากผู้เรียก (คั่นด้วย <code>,</code>)</td>
+              <td><code>(string name, int age)</code></td>
+            </tr>
+            <tr>
+              <td><strong>5. Method Body</strong></td>
+              <td>ชุดคำสั่งภายในปีกกา <code>{ ... }</code></td>
+              <td>คำสั่งคำนวณและ <code>return</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">2. ประเภทของ User-Defined Method ทั้ง 4 รูปแบบ (ออกสอบแน่นอน!)</div>
+        </div>
+        <p>ในสไลด์แบ่งประเภทของ Method ตาม <strong>Parameter</strong> และ <strong>Return Data</strong> ออกเป็น 4 แบบ ดังนี้:</p>
+
+        <div class="code-wrapper">
+          <div class="code-header"><span>ตัวอย่างครบทั้ง 4 รูปแบบของ Method (รันได้จริง)</span><button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button></div>
+          <pre><span class="kw">using</span> System;
+
+<span class="kw">public class</span> <span class="type">MethodFourTypes</span> {
+    <span class="kw">public static void</span> <span class="mth">Main</span>(<span class="kw">string</span>[] args) {
+        <span class="cmt">// แบบที่ 1: No parameter + No return data -> เรียกชื่อโดดๆ</span>
+        <span class="mth">SayHi</span>();
+
+        <span class="cmt">// แบบที่ 2: No parameter + Return data -> ต้องเอาตัวแปรมารับ หรือพิมพ์ค่าทันที</span>
+        <span class="kw">int</span> majors = <span class="mth">GetNumMajor</span>();
+        Console.<span class="mth">WriteLine</span>(<span class="str">"IT school has {0} majors."</span>, majors);
+
+        <span class="cmt">// แบบที่ 3: Parameter(s) + No return data -> ส่ง Argument ให้ตรงชนิดและลำดับ</span>
+        <span class="mth">ShowName</span>(<span class="str">"Lisa"</span>, <span class="num">23</span>);
+
+        <span class="cmt">// แบบที่ 4: Parameter(s) + Return data -> ส่งค่าเข้าไปคำนวณแล้วรับผลลัพธ์กลับ</span>
+        <span class="kw">int</span> total = <span class="mth">Sum</span>(<span class="num">9</span>, <span class="num">4</span>);
+        Console.<span class="mth">WriteLine</span>(<span class="str">"Sum = "</span> + total);
+    }
+
+    <span class="cmt">// 1. No parameter + No return</span>
+    <span class="kw">public static void</span> <span class="mth">SayHi</span>() {
+        Console.<span class="mth">WriteLine</span>(<span class="str">"Hello, Sawasdee"</span>);
+    }
+
+    <span class="cmt">// 2. No parameter + Return int</span>
+    <span class="kw">public static int</span> <span class="mth">GetNumMajor</span>() {
+        <span class="kw">int</span> numMajor = <span class="num">5</span>;
+        <span class="kw">return</span> numMajor;
+    }
+
+    <span class="cmt">// 3. Parameter(s) + No return</span>
+    <span class="kw">public static void</span> <span class="mth">ShowName</span>(<span class="kw">string</span> name, <span class="kw">int</span> age) {
+        Console.<span class="mth">WriteLine</span>(<span class="str">"Hello "</span> + name + <span class="str">", age "</span> + age);
+    }
+
+    <span class="cmt">// 4. Parameter(s) + Return int</span>
+    <span class="kw">public static int</span> <span class="mth">Sum</span>(<span class="kw">int</span> num1, <span class="kw">int</span> num2) {
+        <span class="kw">return</span> num1 + num2;
+    }
+}</pre>
+        </div>
+        <div class="output-box">Hello, Sawasdee
+IT school has 5 majors.
+Hello Lisa, age 23
+Sum = 13</div>
+
+        <div class="callout callout-exam">
+          <strong>ความแตกต่างระหว่าง Parameter vs Argument และกฎการ Return:</strong><br>
+          • <strong>Parameter:</strong> ตัวแปรที่ประกาศตรงหัว Method (เช่น <code>int num1, int num2</code>)<br>
+          • <strong>Argument:</strong> ค่าจริงหรือตัวแปรที่ส่งเข้าไปตอนเรียกใช้ Method (เช่น <code>Sum(9, 4)</code> หรือ <code>Sum(tmpNum1, tmpNum2)</code>) ต้องมี<strong>จำนวน ชนิดข้อมูล (Data Type) และลำดับตรงกัน</strong><br>
+          • <strong>กฎของ <code>return</code>:</strong><br>
+            1) ถ้า Return Type ไม่ใช่ <code>void</code> ทุกเส้นทางของโค้ด (เช่น ใน <code>if-else</code>) <strong>ต้องมีคำสั่ง <code>return</code></strong> และค่าที่ส่งกลับต้องตรงชนิด<br>
+            2) ทันทีที่โปรแกรมทำงานถึงบรรทัด <code>return ...;</code> <strong>Method จะจบการทำงานทันที</strong> คำสั่งที่อยู่ใต้ <code>return</code> จะไม่ถูกทำงาน<br>
+            3) Method ที่เป็น <code>void</code> ห้ามเขียน <code>return value;</code> (เขียนได้แค่ <code>return;</code> เปล่าๆ เพื่อออกก่อนกำหนด)
+        </div>
+      </div>
+
+      <!-- Flashcards Reviewing Chapter 1 (Loop) -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧠 Flashcards ทบทวนความจำ (ทบทวนบทที่ 1: Loop)</div>
+        </div>
+        <p style="font-size:0.86rem; color:var(--text-muted);">กดปุ่ม "พลิกดูคำตอบ" เพื่อเช็กความแม่นยำของเนื้อหาบทก่อนหน้า</p>
+        <div class="flashcard-grid">
+          <div class="flashcard">
+            <div>
+              <span class="fc-tag">ทบทวน Loop #1</span>
+              <div class="fc-front">หากกำหนดค่าเริ่มต้น <code>int x = 20;</code> ลูป <code>while (x &lt; 10)</code> กับ <code>do { ... } while (x &lt; 10);</code> จะทำงานต่างกันอย่างไร?</div>
+            </div>
+            <div>
+              <div class="fc-back" id="fc-1"><strong>คำตอบ:</strong><br>• <code>while</code> เป็น <strong>Pretest Loop</strong> เช็กเงื่อนไขก่อน (20 &lt; 10 เป็น False) จึงทำงาน <strong>0 รอบ</strong><br>• <code>do...while</code> เป็น <strong>Posttest Loop</strong> ทำงานก่อน 1 รอบ แล้วค่อยเช็กเงื่อนไข จึงทำงาน <strong>1 รอบ</strong> (และต้องมี <code>;</code> หลัง while)</div>
+              <button class="btn btn-outline" style="margin-top:10px; width:100%;" onclick="flipCard('fc-1')">🔄 พลิกดูคำตอบ</button>
+            </div>
+          </div>
+
+          <div class="flashcard">
+            <div>
+              <span class="fc-tag">ทบทวน Loop #2</span>
+              <div class="fc-front">ในลูป <code>for (int i = 1; i &lt;= 5; i++)</code> หากเจอ <code>if (i == 3) continue;</code> ค่าตัวแปร <code>i</code> จะยังถูกอัปเดตด้วย <code>i++</code> หรือไม่?</div>
+            </div>
+            <div>
+              <div class="fc-back" id="fc-2"><strong>คำตอบ:</strong><br><strong>อัปเดตครับ!</strong> ใน <code>for</code> loop คำสั่ง <code>continue</code> จะข้ามคำสั่งที่เหลือในปีกกา แล้วกระโดดไปทำส่วน STEP (<code>i++</code>) จากนั้นจึงเช็กเงื่อนไข <code>i &lt;= 5</code> ต่างจาก <code>while</code> ที่อาจเกิด Infinite Loop หากวาง <code>i++</code> ไว้หลัง <code>continue</code></div>
+              <button class="btn btn-outline" style="margin-top:10px; width:100%;" onclick="flipCard('fc-2')">🔄 พลิกดูคำตอบ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapter 2 Quiz -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📝 แบบฝึกหัดท้ายบทที่ 2: Method</div>
+          <button class="btn btn-success" onclick="checkChapterQuiz('method')">ตรวจคำตอบบทที่ 2</button>
+        </div>
+        <div id="quiz-container-method"></div>
+      </div>
+
+      <div class="chapter-nav-footer">
+        <button class="btn btn-outline" onclick="navigateTo('sec-loop')">← บทที่ 1: Loop</button>
+        <button class="btn btn-success" id="btn-complete-method" onclick="toggleChapterComplete('method')">✓ ทำเครื่องหมายว่าเรียนจบบทที่ 2</button>
+        <button class="btn btn-primary" onclick="navigateTo('sec-array')">บทถัดไป: Array →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 3: ARRAY ==================== -->
+    <section id="sec-array" class="section-view">
+      <div class="hero-banner">
+        <span class="hero-tag">บทที่ 3 • เน้นพิเศษออกสอบหนัก ★</span>
+        <h1>Array (อาร์เรย์ 1 มิติ, 2 มิติ และการส่งผ่าน Method)</h1>
+        <p>เจาะลึก Index 0 ถึง Length - 1, การประกาศและสร้าง Array, การส่ง Array เข้า/ออกจาก Method, และ 2D Array กับ GetLength(0) / GetLength(1)</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">1. แนวคิด การประกาศ และการกำหนดค่า Array 1 มิติ</div>
+        </div>
+        <p><strong>Array</strong> คือกลุ่มของข้อมูลที่มี<strong>ชนิดข้อมูลเดียวกัน (Same Data Type)</strong> เก็บเรียงต่อกันในหน่วยความจำ สมาชิกแต่ละตัวเรียกว่า <strong>Element</strong> เข้าถึงผ่านตำแหน่ง <strong>Index</strong> โดย <strong>Index เริ่มต้นที่ <code>0</code> เสมอ</strong> และตัวสุดท้ายอยู่ที่ <strong><code>Length - 1</code></strong> (Upper Bound)</p>
+
+        <div class="code-wrapper">
+          <div class="code-header"><span>รูปแบบการประกาศและสร้าง Array 1 มิติ (ตามสไลด์หน้า 25)</span><button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button></div>
+          <pre><span class="cmt">// 1. Declaration (ประกาศตัวแปรอาร์เรย์)</span>
+<span class="kw">string</span>[] students;
+<span class="kw">int</span>[] nums;
+
+<span class="cmt">// 2. Creation (จองขนาดหน่วยความจำด้วย new)</span>
+students = <span class="kw">new string</span>[<span class="num">3</span>]; <span class="cmt">// Index คือ 0, 1, 2</span>
+nums = <span class="kw">new int</span>[<span class="num">5</span>];        <span class="cmt">// Index คือ 0, 1, 2, 3, 4 (ค่าเริ่มต้นของ int คือ 0)</span>
+
+<span class="cmt">// 3. Combine Declaration & Creation (ประกาศพร้อมจองขนาด)</span>
+<span class="kw">float</span>[] price = <span class="kw">new float</span>[<span class="num">10</span>];
+
+<span class="cmt">// 4. Initialization (ประกาศพร้อมกำหนดค่าเริ่มต้น)</span>
+<span class="kw">int</span>[] num1 = <span class="kw">new int</span>[<span class="num">3</span>] { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> };
+<span class="kw">int</span>[] num2 = { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> }; <span class="cmt">// แบบย่อ (C# นับขนาดให้อัตโนมัติ = 3)</span></pre>
+        </div>
+
+        <div class="callout callout-warn">
+          <strong>ข้อผิดพลาดอันดับ 1 ของเรื่อง Array (IndexOutOfRangeException):</strong><br>
+          ถ้าประกาศ <code>int[] value = new int[9];</code> จะมี <code>value.Length == 9</code> แต่ Index ที่ใช้ได้คือ <code>0</code> ถึง <code>8</code> เท่านั้น!<br>
+          หากเขียนลูป <code>for (int i = 0; i &lt;= value.Length; i++)</code> (ใช้ <code>&lt;=</code> แทน <code>&lt;</code>) โปรแกรมจะพังทันทีเมื่อ <code>i = 9</code> เพราะไม่มี <code>value[9]</code>!
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">2. การส่ง Array เข้าและออกจาก Method (ออกสอบบ่อยมาก!)</div>
+        </div>
+        <p>Method ปกติส่งค่ากลับได้เพียง 1 ค่า แต่เราสามารถใช้ Array เพื่อส่งข้อมูลหลายค่าเข้าหรือออกจาก Method ได้ 3 ลักษณะตามสไลด์:</p>
+        <ul style="margin: 8px 0 12px 22px;">
+          <li><strong>ส่งสมาชิกตัวเดียว (Single Element):</strong> เช่น <code>Add2Values(arr[0], arr[2])</code> พารามิเตอร์รับเป็นตัวแปรธรรมดา <code>(int v1, int v2)</code></li>
+          <li><strong>ส่งทั้ง Array (Whole Array):</strong> เช่น <code>Summation(arr)</code> <strong>ใส่แค่ชื่อตัวแปรอาร์เรย์ ไม่ต้องใส่ <code>[]</code> ตอนเรียก</strong> ส่วนหัว Method รับเป็น <code>(int[] a)</code></li>
+          <li><strong>คืนค่ากลับเป็น Array (Return Array):</strong> กำหนด Return Type เป็น <code>int[]</code> และ <code>return a;</code> (ส่งแค่ชื่อตัวแปรอาร์เรย์)</li>
+        </ul>
+
+        <div class="code-wrapper">
+          <div class="code-header"><span>ตัวอย่างครบสูตร: ส่ง Element, ส่งทั้ง Array และ Return Array</span><button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button></div>
+          <pre><span class="kw">using</span> System;
+
+<span class="kw">public class</span> <span class="type">ArrayMethodDemo</span> {
+    <span class="kw">public static void</span> <span class="mth">Main</span>() {
+        <span class="kw">int</span>[] arr = { <span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span> };
+
+        <span class="cmt">// 1. ส่งสมาชิกบางตัว (Pass by Value)</span>
+        Console.<span class="mth">WriteLine</span>(<span class="str">"Sum 2 elements = "</span> + <span class="mth">Add2Values</span>(arr[<span class="num">0</span>], arr[<span class="num">2</span>]));
+
+        <span class="cmt">// 2. ส่งทั้ง Array เข้า Method (Pass by Reference - แก้ไขค่าข้างในกระทบตัวจริง!)</span>
+        Console.<span class="mth">WriteLine</span>(<span class="str">"Total = "</span> + <span class="mth">Summation</span>(arr));
+
+        <span class="cmt">// 3. รับ Array ที่ Return กลับมาจาก Method</span>
+        <span class="kw">int</span>[] generated = <span class="mth">SetNumber</span>();
+        <span class="kw">foreach</span> (<span class="kw">int</span> x <span class="kw">in</span> generated) {
+            Console.<span class="mth">Write</span>(x + <span class="str">" "</span>);
+        }
+    }
+
+    <span class="kw">public static int</span> <span class="mth">Add2Values</span>(<span class="kw">int</span> v1, <span class="kw">int</span> v2) {
+        <span class="kw">return</span> v1 + v2;
+    }
+
+    <span class="kw">public static int</span> <span class="mth">Summation</span>(<span class="kw">int</span>[] a) {
+        <span class="kw">int</span> sum = <span class="num">0</span>;
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; a.Length; i++) {
+            sum += a[i];
+        }
+        <span class="kw">return</span> sum;
+    }
+
+    <span class="kw">public static int</span>[] <span class="mth">SetNumber</span>() {
+        <span class="kw">int</span>[] temp = { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span> };
+        <span class="kw">return</span> temp;
+    }
+}</pre>
+        </div>
+        <div class="output-box">Sum 2 elements = 40
+Total = 60
+1 2 3 4 5 </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">3. Multidimensional Arrays (Array 2 มิติ) และ Properties สำคัญ</div>
+        </div>
+        <p>Array 2 มิติ ใช้เครื่องหมายจุลภาค <code>[,]</code> ภายในวงเล็บเหลี่ยม (C# รองรับสูงสุด 32 มิติ) มองเป็นตาราง <strong>[แถว (Row), คอลัมน์ (Column)]</strong></p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Property / Method</th>
+              <th>หน้าที่ (ตัวอย่าง <code>int[,] arr = new int[4, 2];</code>)</th>
+              <th>ค่าที่ได้</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>arr.Length</code></td>
+              <td>จำนวนสมาชิก<strong>ทั้งหมดทุกช่องรวมกัน</strong> (4 × 2)</td>
+              <td><code>8</code></td>
+            </tr>
+            <tr>
+              <td><code>arr.Rank</code></td>
+              <td>จำนวน<strong>มิติ</strong>ของอาร์เรย์</td>
+              <td><code>2</code></td>
+            </tr>
+            <tr>
+              <td><code>arr.GetLength(0)</code></td>
+              <td>ขนาดของมิติที่ 1 = <strong>จำนวนแถว (Rows)</strong></td>
+              <td><code>4</code></td>
+            </tr>
+            <tr>
+              <td><code>arr.GetLength(1)</code></td>
+              <td>ขนาดของมิติที่ 2 = <strong>จำนวนคอลัมน์ (Columns)</strong></td>
+              <td><code>2</code></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="code-wrapper">
+          <div class="code-header"><span>การใช้ Nested Loop วนอ่าน Array 2 มิติ (สไลด์หน้า 33)</span><button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button></div>
+          <pre><span class="kw">int</span>[,] a = <span class="kw">new int</span>[<span class="num">3</span>, <span class="num">2</span>] { { <span class="num">11</span>, <span class="num">12</span> }, { <span class="num">21</span>, <span class="num">22</span> }, { <span class="num">31</span>, <span class="num">32</span> } };
+
+<span class="kw">for</span> (<span class="kw">int</span> r = <span class="num">0</span>; r &lt; a.<span class="mth">GetLength</span>(<span class="num">0</span>); r++) {       <span class="cmt">// วนแถว (0 ถึง 2)</span>
+    <span class="kw">for</span> (<span class="kw">int</span> c = <span class="num">0</span>; c &lt; a.<span class="mth">GetLength</span>(<span class="num">1</span>); c++) {   <span class="cmt">// วนคอลัมน์ (0 ถึง 1)</span>
+        Console.<span class="mth">Write</span>(<span class="str">"a[{0},{1}]={2}  "</span>, r, c, a[r, c]);
+    }
+    Console.<span class="mth">WriteLine</span>();
+}</pre>
+        </div>
+        <div class="output-box">a[0,0]=11  a[0,1]=12  
+a[1,0]=21  a[1,1]=22  
+a[2,0]=31  a[2,1]=32  </div>
+      </div>
+
+      <!-- Flashcards Reviewing Loop & Method -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧠 Flashcards ทบทวนความจำ (ทบทวนบทที่ 1: Loop & บทที่ 2: Method)</div>
+        </div>
+        <div class="flashcard-grid">
+          <div class="flashcard">
+            <div>
+              <span class="fc-tag">ทบทวน Loop</span>
+              <div class="fc-front">หากต้องการอ่านสมาชิกทุกตัวใน Array โดยไม่ต้องใช้ตัวนับ Index และไม่ต้องการแก้ไขค่าใน Array ควรใช้ลูปใด?</div>
+            </div>
+            <div>
+              <div class="fc-back" id="fc-3"><strong>คำตอบ:</strong><br>ใช้ <code>foreach (DataType varName in arrayName)</code> เพราะอ่านเรียงจาก Index <code>0</code> ถึง <code>Length - 1</code> อัตโนมัติ ไม่เสี่ยงเกิด IndexOutOfRangeException</div>
+              <button class="btn btn-outline" style="margin-top:10px; width:100%;" onclick="flipCard('fc-3')">🔄 พลิกดูคำตอบ</button>
+            </div>
+          </div>
+
+          <div class="flashcard">
+            <div>
+              <span class="fc-tag">ทบทวน Method</span>
+              <div class="fc-front">หากประกาศ Method <code>public static double Calc(int a, double b)</code> ข้อใดเรียกใช้ผิด:<br>A) <code>double x = Calc(5, 2.5);</code><br>B) <code>Calc(2.5, 5);</code></div>
+            </div>
+            <div>
+              <div class="fc-back" id="fc-4"><strong>คำตอบ:</strong><br><strong>ข้อ B ผิด!</strong> เพราะ Argument ตัวแรกส่ง <code>2.5</code> (double) เข้าไปใน Parameter <code>int a</code> ซึ่ง C# ไม่อนุญาตให้แปลง double เป็น int อัตโนมัติ (Type Mismatch)</div>
+              <button class="btn btn-outline" style="margin-top:10px; width:100%;" onclick="flipCard('fc-4')">🔄 พลิกดูคำตอบ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapter 3 Quiz -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📝 แบบฝึกหัดท้ายบทที่ 3: Array</div>
+          <button class="btn btn-success" onclick="checkChapterQuiz('array')">ตรวจคำตอบบทที่ 3</button>
+        </div>
+        <div id="quiz-container-array"></div>
+      </div>
+
+      <div class="chapter-nav-footer">
+        <button class="btn btn-outline" onclick="navigateTo('sec-method')">← บทที่ 2: Method</button>
+        <button class="btn btn-success" id="btn-complete-array" onclick="toggleChapterComplete('array')">✓ ทำเครื่องหมายว่าเรียนจบบทที่ 3</button>
+        <button class="btn btn-primary" onclick="navigateTo('sec-class')">บทถัดไป: Class →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 4: CLASS ==================== -->
+    <section id="sec-class" class="section-view">
+      <div class="hero-banner">
+        <span class="hero-tag">บทที่ 4 • OBJECT ORIENTED PROGRAMMING (OOP)</span>
+        <h1>Class & Object (คลาส ออบเจกต์ พร็อพเพอร์ตี้ และคอนสตรัคเตอร์)</h1>
+        <p>เข้าใจ Blueprint vs Instance, Encapsulation, Access Modifiers, Field vs Property (get/set), Constructor Overloading และ Array of Class</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">1. แนวคิด OOP: Class, Object, Encapsulation และ Modifier</div>
+        </div>
+        <ul style="margin: 6px 0 14px 22px;">
+          <li><strong>Class (คลาส):</strong> คือ<strong>แม่แบบ (Blueprint)</strong> สำหรับสร้างออบเจกต์ ประกอบด้วย <strong>Attributes/Fields</strong> (สถานะ/ข้อมูล) และ <strong>Behaviors/Methods</strong> (พฤติกรรม/การทำงาน) (1 Class สามารถสร้างได้ Many Objects)</li>
+          <li><strong>Object (ออบเจกต์ / Instance):</strong> คือ<strong>ตัวตนจริง</strong>ที่ถูกสร้างขึ้นจาก Class โดยใช้คำสั่ง <code>new</code> เช่น <code>Student s1 = new Student();</code></li>
+          <li><strong>Encapsulation (การห่อหุ้มข้อมูล):</strong> การรวม Field และ Method ไว้ใน Class เดียวกัน และซ่อนข้อมูลภายใน (<code>private</code>) โดยเปิดให้เข้าถึงผ่าน <code>public Property</code> หรือ <code>public Method</code></li>
+          <li><strong>Modifiers (ตามสไลด์หน้า 40):</strong>
+            <br>• <code>public</code> : เข้าถึงได้จากทุกคลาส (ใน UML ใช้สัญลักษณ์ <code>+</code>)
+            <br>• <code>private</code> : เข้าถึงได้เฉพาะ<strong>ภายในคลาสเดียวกันเท่านั้น</strong> (ใน UML ใช้สัญลักษณ์ <code>-</code>)
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">2. Field, Property (get / set) และ Constructor</div>
+        </div>
+        <p><strong>Field (Backing Field):</strong> ตัวแปรที่ประกาศในขอบเขตของ Class (Class Scope) มักกำหนดเป็น <code>private</code> เพื่อป้องกันการแก้ไขโดยตรงจากภายนอก</p>
+        <p style="margin-top:6px;"><strong>Property:</strong> ส่วนผสมระหว่างตัวแปรและเมธอด ใช้เป็นตัวกลางเข้าถึง <code>private field</code> ประกอบด้วย 2 ส่วนคือ:</p>
+        <ul style="margin: 6px 0 12px 22px;">
+          <li><code>get</code> accessor: อ่าน/คืนค่าจาก Field</li>
+          <li><code>set</code> accessor: กำหนดค่าให้ Field โดยใช้คีย์เวิร์ดพิเศษชื่อ <strong><code>value</code></strong> แทนค่าที่ส่งเข้ามา</li>
+        </ul>
+
+        <p><strong>Constructor (คอนสตรัคเตอร์):</strong> เมธอดพิเศษของ Class ที่ทำงานอัตโนมัติเมื่อสร้าง Object ด้วย <code>new</code> มีกฎเหล็ก 3 ข้อ (ตามสไลด์หน้า 47):</p>
+        <ol style="margin: 6px 0 12px 22px;">
+          <li><strong>ชื่อต้องเหมือนชื่อ Class ทุกตัวอักษร</strong></li>
+          <li><strong>ห้ามมี Return Type (แม้แต่ <code>void</code> ก็ห้ามใส่!)</strong> และไม่ใช่ <code>static</code></li>
+          <li>1 Class มีได้หลาย Constructor (Overloading) โดยต้องมี Parameter ต่างกัน (หากไม่เขียนเลย C# จะมี Default Constructor ว่างๆ ให้ แต่<strong>ถ้าเขียนแบบมี Parameter แล้ว Default Constructor แบบไม่มี Parameter จะหายไปทันที!</strong>)</li>
+        </ol>
+
+        <div class="code-wrapper">
+          <div class="code-header"><span>ตัวอย่างครบเครื่อง: Field, Property 3 แบบ, Constructor Overloading และ Array of Class</span><button class="copy-btn" onclick="copyCode(this)">คัดลอกโค้ด</button></div>
+          <pre><span class="kw">using</span> System;
+
+<span class="kw">public class</span> <span class="type">Person</span> {
+    <span class="cmt">// 1. Private Backing Fields</span>
+    <span class="kw">private string</span> first;
+    <span class="kw">private string</span> last;
+
+    <span class="cmt">// 2. Custom Property (แบบเต็ม)</span>
+    <span class="kw">public string</span> First {
+        <span class="kw">get</span> { <span class="kw">return</span> first; }
+        <span class="kw">set</span> { first = value; } <span class="cmt">// value คือคีย์เวิร์ดรับค่าที่ส่งมา</span>
+    }
+
+    <span class="cmt">// Expression-bodied Property (แบบลูกศรตามสไลด์หน้า 46)</span>
+    <span class="kw">public string</span> Last {
+        <span class="kw">get</span> =&gt; last;
+        <span class="kw">set</span> =&gt; last = value;
+    }
+
+    <span class="cmt">// Auto-implemented Property (แบบย่อ ไม่ต้องสร้าง field เอง)</span>
+    <span class="kw">public int</span> Age { <span class="kw">get</span>; <span class="kw">set</span>; }
+
+    <span class="cmt">// 3. Constructors (Overloading 3 แบบ)</span>
+    <span class="kw">public</span> <span class="mth">Person</span>() {
+        first = <span class="str">"Unknown"</span>;
+        last = <span class="str">"Unknown"</span>;
+    }
+
+    <span class="kw">public</span> <span class="mth">Person</span>(<span class="kw">string</span> firstName) {
+        first = firstName;
+        last = <span class="str">""</span>;
+    }
+
+    <span class="kw">public</span> <span class="mth">Person</span>(<span class="kw">string</span> firstName, <span class="kw">string</span> lastName) {
+        first = firstName;
+        last = lastName;
+    }
+
+    <span class="cmt">// 4. Method Member</span>
+    <span class="kw">public void</span> <span class="mth">ShowInfo</span>() {
+        Console.<span class="mth">WriteLine</span>(first + <span class="str">" "</span> + last);
+    }
+}
+
+<span class="kw">public class</span> <span class="type">MainPerson</span> {
+    <span class="kw">public static void</span> <span class="mth">Main</span>() {
+        <span class="cmt">// Array of Class (สไลด์หน้า 49)</span>
+        <span class="type">Person</span>[] people = <span class="kw">new</span> <span class="type">Person</span>[<span class="num">3</span>]; <span class="cmt">// สร้างช่องอ้างอิง 3 ช่อง (ยังเป็น null!)</span>
+        people[<span class="num">0</span>] = <span class="kw">new</span> <span class="type">Person</span>();
+        people[<span class="num">1</span>] = <span class="kw">new</span> <span class="type">Person</span>(<span class="str">"Toby"</span>);
+        people[<span class="num">2</span>] = <span class="kw">new</span> <span class="type">Person</span>(<span class="str">"Laura"</span>, <span class="str">"White"</span>);
+
+        people[<span class="num">1</span>].Last = <span class="str">"Green"</span>; <span class="cmt">// เรียกใช้ set ของ Property Last</span>
+
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; people.Length; i++) {
+            people[i].<span class="mth">ShowInfo</span>();
+        }
+    }
+}</pre>
+        </div>
+        <div class="output-box">Unknown Unknown
+Toby Green
+Laura White</div>
+
+        <div class="callout callout-warn">
+          <strong>กับดักข้อสอบเรื่อง Array of Class:</strong><br>
+          คำสั่ง <code>Person[] p = new Person[3];</code> เป็นเพียงการจองพื้นที่ Array 3 ช่องสำหรับเก็บ Reference เท่านั้น (ค่าข้างในยังเป็น <code>null</code>) <strong>ต้องใช้คำสั่ง <code>p[i] = new Person();</code> สร้าง Object ทีละช่องก่อน</strong> มิฉะนั้นจะเกิด <code>NullReferenceException</code>!
+        </div>
+      </div>
+
+      <!-- Flashcards Reviewing Method & Array -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧠 Flashcards ทบทวนความจำ (ทบทวนบทที่ 2: Method & บทที่ 3: Array)</div>
+        </div>
+        <div class="flashcard-grid">
+          <div class="flashcard">
+            <div>
+              <span class="fc-tag">ทบทวน Method</span>
+              <div class="fc-front">ถ้าส่งตัวแปร <code>int x = 10;</code> เข้าไปใน Method <code>void AddFive(int n) { n += 5; }</code> ค่า <code>x</code> ใน Main จะเปลี่ยนเป็น 15 หรือไม่?</div>
+            </div>
+            <div>
+              <div class="fc-back" id="fc-5"><strong>คำตอบ:</strong><br><strong>ไม่เปลี่ยนครับ!</strong> <code>x</code> ใน Main ยังเป็น <code>10</code> เหมือนเดิม เพราะชนิดข้อมูลพื้นฐาน (int, double, bool) ส่งแบบ <strong>Pass by Value</strong> (คัดลอกค่าไปให้ <code>n</code>)</div>
+              <button class="btn btn-outline" style="margin-top:10px; width:100%;" onclick="flipCard('fc-5')">🔄 พลิกดูคำตอบ</button>
+            </div>
+          </div>
+
+          <div class="flashcard">
+            <div>
+              <span class="fc-tag">ทบทวน Array</span>
+              <div class="fc-front">กำหนด <code>int[,] m = new int[3, 5];</code> ค่าของ <code>m.Length</code>, <code>m.GetLength(0)</code> และ <code>m.GetLength(1)</code> คือเท่าไรตามลำดับ?</div>
+            </div>
+            <div>
+              <div class="fc-back" id="fc-6"><strong>คำตอบ:</strong><br>• <code>m.Length</code> = <strong>15</strong> (3 × 5 ช่องทั้งหมด)<br>• <code>m.GetLength(0)</code> = <strong>3</strong> (จำนวนแถว)<br>• <code>m.GetLength(1)</code> = <strong>5</strong> (จำนวนคอลัมน์)</div>
+              <button class="btn btn-outline" style="margin-top:10px; width:100%;" onclick="flipCard('fc-6')">🔄 พลิกดูคำตอบ</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chapter 4 Quiz -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📝 แบบฝึกหัดท้ายบทที่ 4: Class & OOP</div>
+          <button class="btn btn-success" onclick="checkChapterQuiz('class')">ตรวจคำตอบบทที่ 4</button>
+        </div>
+        <div id="quiz-container-class"></div>
+      </div>
+
+      <div class="chapter-nav-footer">
+        <button class="btn btn-outline" onclick="navigateTo('sec-array')">← บทที่ 3: Array</button>
+        <button class="btn btn-success" id="btn-complete-class" onclick="toggleChapterComplete('class')">✓ ทำเครื่องหมายว่าเรียนจบบทที่ 4</button>
+        <button class="btn btn-primary" onclick="navigateTo('sec-tracing')">ไปฝึกอ่านโค้ด (Code Tracing) →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 5: CODE TRACING ==================== -->
+    <section id="sec-tracing" class="section-view">
+      <div class="hero-banner">
+        <span class="hero-tag">CODE TRACING LAB • ฝึกไล่ตัวแปรทีละบรรทัด</span>
+        <h1>ฝึกอ่านโค้ดและทำนายผลลัพธ์ (ง่าย → ยาก)</h1>
+        <p>ลองเขียนคำตอบในใจหรือในช่องด้านล่างก่อน แล้วกดปุ่มเฉลยเพื่อดูตารางแสดงค่าตัวแปรในแต่ละรอบ (Trace Table) และคำอธิบายอย่างละเอียด</p>
+      </div>
+
+      <div id="tracing-container"></div>
+
+      <div class="chapter-nav-footer">
+        <button class="btn btn-outline" onclick="navigateTo('sec-class')">← บทที่ 4: Class</button>
+        <button class="btn btn-primary" onclick="navigateTo('sec-cheatsheet')">ไปหน้า Cheat Sheet ก่อนสอบ →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 6: CHEAT SHEET ==================== -->
+    <section id="sec-cheatsheet" class="section-view">
+      <div class="hero-banner">
+        <span class="hero-tag">QUICK REFERENCE • สรุป 1 หน้าจบก่อนเข้าห้องสอบ</span>
+        <h1>C# Exam Cheat Sheet</h1>
+        <p>รวบรวม Syntax สำคัญทั้ง 4 บท จุดที่มักออกสอบ และข้อควรระวังที่ห้ามพลาด</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">1. Loop Syntax & Jump</div></div>
+          <pre style="background:var(--code-bg); border-radius:8px;"><span class="cmt">// for (Pretest - Definite)</span>
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; n; i++) { }
+
+<span class="cmt">// while (Pretest - เช็กก่อนทำ: 0..N รอบ)</span>
+<span class="kw">while</span> (condition) { }
+
+<span class="cmt">// do..while (Posttest - ทำก่อนเช็ก: 1..N รอบ)</span>
+<span class="kw">do</span> { } <span class="kw">while</span> (condition); <span class="cmt">// มี ;</span>
+
+<span class="cmt">// foreach (Pretest - อ่านอย่างเดียว แก้ค่าไม่ได้)</span>
+<span class="kw">foreach</span> (<span class="kw">int</span> x <span class="kw">in</span> arr) { }</pre>
+          <p style="font-size:0.85rem; margin-top:8px;">• <code>break</code> = ออกจากลูปทันที | <code>continue</code> = ข้ามรอบนี้ไปรอบถัดไป</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">2. Method & Parameter / Return</div></div>
+          <pre style="background:var(--code-bg); border-radius:8px;"><span class="cmt">// ประกาศนอก Main() แต่อยู่ใน Class</span>
+<span class="kw">public static</span> ReturnType <span class="mth">MethodName</span>(Type p1, Type p2) {
+    <span class="kw">return</span> value; <span class="cmt">// ถ้าไม่ใช่ void ต้องมี return</span>
+}
+
+<span class="cmt">// การส่งและคืนค่า Array</span>
+<span class="kw">public static int</span>[] <span class="mth">Process</span>(<span class="kw">int</span>[] data) {
+    <span class="kw">return</span> data; <span class="cmt">// ส่งแค่ชื่อ ไม่ต้องใส่ []</span>
+}</pre>
+          <p style="font-size:0.85rem; margin-top:8px;">• Primitive (int/double) = Pass by Value | Array/Object = Pass by Reference</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">3. Array 1D & 2D</div></div>
+          <pre style="background:var(--code-bg); border-radius:8px;"><span class="cmt">// 1D Array (Index: 0 ถึง Length - 1)</span>
+<span class="kw">int</span>[] a = <span class="kw">new int</span>[<span class="num">5</span>];
+<span class="kw">int</span>[] b = { <span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span> };
+
+<span class="cmt">// 2D Array [row, col]</span>
+<span class="kw">int</span>[,] m = <span class="kw">new int</span>[<span class="num">3</span>, <span class="num">4</span>];
+<span class="cmt">// m.Length == 12 | m.Rank == 2</span>
+<span class="cmt">// m.GetLength(0) == 3 (Rows)</span>
+<span class="cmt">// m.GetLength(1) == 4 (Cols)</span></pre>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">4. Class, Property & Constructor</div></div>
+          <pre style="background:var(--code-bg); border-radius:8px;"><span class="kw">public class</span> <span class="type">Book</span> {
+    <span class="kw">private string</span> title; <span class="cmt">// Field</span>
+    <span class="kw">public string</span> Title { <span class="cmt">// Property</span>
+        <span class="kw">get</span> { <span class="kw">return</span> title; }
+        <span class="kw">set</span> { title = value; }
+    }
+    <span class="kw">public int</span> Pages { <span class="kw">get</span>; <span class="kw">set</span>; } <span class="cmt">// Auto</span>
+    <span class="kw">public</span> <span class="mth">Book</span>(<span class="kw">string</span> t) { title = t; } <span class="cmt">// Constructor</span>
+}
+<span class="type">Book</span>[] list = <span class="kw">new</span> <span class="type">Book</span>[<span class="num">2</span>]; <span class="cmt">// ต้อง new list[i] ทีละช่อง!</span></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">⚠️ Top 8 ข้อผิดพลาดที่ทำให้เสียคะแนนในห้องสอบ</div></div>
+        <ol style="margin-left: 22px; line-height: 1.8;">
+          <li>ลืมเครื่องหมาย <code>;</code> หลัง <code>while(condition);</code> ในลูป <code>do...while</code></li>
+          <li>เขียนเงื่อนไข <code>i &lt;= arr.Length</code> ทำให้เกิด <code>IndexOutOfRangeException</code> (ต้องเป็น <code>i &lt; arr.Length</code>)</li>
+          <li>พยายามแก้ไขค่าสมาชิกในลูป <code>foreach (int x in arr) { x = 10; }</code> (Compile Error!)</li>
+          <li>ประกาศ Method ซ้อนอยู่ใน <code>Main()</code> หรือลืมใส่ <code>static</code> เมื่อเรียกจาก <code>Main()</code></li>
+          <li>ใส่ <code>[]</code> ตอนส่งชื่อตัวแปร Array เข้า Method เช่น <code>Sum(arr[])</code> (ที่ถูกคือ <code>Sum(arr)</code>)</li>
+          <li>ใช้ <code>arr.Length</code> กับ Array 2 มิติในเงื่อนไขลูปแถว (ต้องใช้ <code>arr.GetLength(0)</code> สำหรับแถว และ <code>arr.GetLength(1)</code> สำหรับคอลัมน์)</li>
+          <li>ใส่ <code>void</code> หน้าชื่อ Constructor เช่น <code>public void Student()</code> (จะกลายเป็น Method ธรรมดา ไม่ใช่ Constructor)</li>
+          <li>สร้าง <code>Student[] s = new Student[5];</code> แล้วเรียก <code>s[0].Name</code> ทันทีโดยยังไม่ <code>s[0] = new Student();</code></li>
+        </ol>
+      </div>
+
+      <div class="chapter-nav-footer">
+        <button class="btn btn-outline" onclick="navigateTo('sec-tracing')">← Code Tracing</button>
+        <button class="btn btn-primary" onclick="navigateTo('sec-errorlog')">ไปหน้า Error Log →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 7: ERROR LOG ==================== -->
+    <section id="sec-errorlog" class="section-view">
+      <div class="hero-banner">
+        <span class="hero-tag">PERSONAL MISTAKE TRACKER • LOCALSTORAGE</span>
+        <h1>บันทึกข้อผิดพลาดส่วนตัว (Error Log)</h1>
+        <p>จดบันทึกจุดที่เคยทำผิด หรือจุดที่ยังสับสนจากการทำแบบฝึกหัดและ Mock Exam เพื่อทบทวนซ้ำก่อนเข้าห้องสอบ</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title" id="err-form-title">➕ เพิ่ม / แก้ไขรายการข้อผิดพลาด</div>
+        </div>
+        <input type="hidden" id="err-edit-id" value="">
+        <div class="grid-2">
+          <div class="form-group">
+            <label>หมวดหมู่บทเรียน</label>
+            <select id="err-topic" class="form-control">
+              <option value="Loop">1. Loop</option>
+              <option value="Method">2. Method</option>
+              <option value="Array">3. Array</option>
+              <option value="Class">4. Class & OOP</option>
+              <option value="Mixed">โจทย์ผสมหลายบท</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>หัวข้อข้อผิดพลาด (เช่น ลืมใส่ return, Index เกินขนาด)</label>
+            <input type="text" id="err-title" class="form-control" placeholder="ระบุจุดที่พลาด...">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>วิธีแก้ไข / สิ่งที่ต้องจำให้แม่น</label>
+          <textarea id="err-note" class="form-control" rows="3" placeholder="เขียนอธิบายวิธีเขียนที่ถูกต้อง หรือตัวอย่างโค้ดสั้นๆ..."></textarea>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-primary" onclick="saveErrorLog()">💾 บันทึกรายการ</button>
+          <button class="btn btn-outline" id="err-cancel-btn" style="display:none;" onclick="cancelEditErrorLog()">ยกเลิกแก้ไข</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 รายการข้อผิดพลาดที่บันทึกไว้</div>
+        </div>
+        <div id="err-list-container"></div>
+      </div>
+
+      <div class="chapter-nav-footer">
+        <button class="btn btn-outline" onclick="navigateTo('sec-cheatsheet')">← Cheat Sheet</button>
+        <button class="btn btn-primary" onclick="navigateTo('sec-mock')">เข้าสู่สนามสอบ Mock Exam 90 ข้อ →</button>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION 8: MOCK EXAM (90 QUESTIONS) ==================== -->
+    <section id="sec-mock" class="section-view">
+      <div class="hero-banner">
+        <span class="hero-tag">FINAL SIMULATION • 90 QUESTIONS • 90 MINUTES</span>
+        <h1>Mock Exam จำลองข้อสอบจริง 90 ข้อ</h1>
+        <p><strong>Part 1:</strong> Multiple Choice (60 ข้อ) และ <strong>Part 2:</strong> Missing Code เติมโค้ดที่หายไป (30 ข้อ) — ระบบจะไม่แสดงเฉลยจนกว่าจะกดส่งข้อสอบ</p>
+      </div>
+
+      <!-- Sticky Exam Status Bar -->
+      <div class="exam-sticky-bar">
+        <div class="exam-stat">⏱️ เวลาที่เหลือ: <span id="exam-timer">90:00</span></div>
+        <div class="exam-stat">✍️ ตอบแล้ว: <span id="exam-answered-count">0</span> / 90 ข้อ</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-outline" onclick="startNewExam(true)">🔀 สุ่มข้อสอบใหม่</button>
+          <button class="btn btn-success" id="btn-submit-exam" onclick="submitMockExam()">✅ ส่งข้อสอบ & ดูผลคะแนน</button>
+        </div>
+      </div>
+
+      <!-- Result Summary Panel (Hidden until submitted) -->
+      <div id="exam-result-panel" class="card" style="display:none; border:2px solid var(--accent-cyan); background:#0c192e;">
+        <div class="card-header">
+          <div class="card-title">🏆 สรุปผลการสอบ Mock Exam</div>
+          <button class="btn btn-primary" onclick="startNewExam(true)">🔄 เริ่มสอบใหม่ (สุ่มข้อสอบและตัวเลือก)</button>
+        </div>
+        <div class="grid-4" style="margin-bottom:16px;">
+          <div style="background:var(--bg-card); padding:14px; border-radius:8px; text-align:center;">
+            <div style="font-size:1.5rem; font-weight:700; color:var(--accent-cyan);" id="res-total">0 / 90</div>
+            <div style="font-size:0.82rem; color:var(--text-muted);">คะแนนรวมทั้งหมด</div>
+          </div>
+          <div style="background:var(--bg-card); padding:14px; border-radius:8px; text-align:center;">
+            <div style="font-size:1.5rem; font-weight:700; color:var(--steel-light);" id="res-part1">0 / 60</div>
+            <div style="font-size:0.82rem; color:var(--text-muted);">Part 1: Multiple Choice</div>
+          </div>
+          <div style="background:var(--bg-card); padding:14px; border-radius:8px; text-align:center;">
+            <div style="font-size:1.5rem; font-weight:700; color:var(--accent-emerald);" id="res-part2">0 / 30</div>
+            <div style="font-size:0.82rem; color:var(--text-muted);">Part 2: Missing Code</div>
+          </div>
+          <div style="background:var(--bg-card); padding:14px; border-radius:8px; text-align:center;">
+            <div style="font-size:1.1rem; font-weight:700; color:var(--accent-amber);" id="res-breakdown">-</div>
+            <div style="font-size:0.82rem; color:var(--text-muted);">ถูก / ผิด / ไม่ได้ตอบ</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn btn-outline" onclick="filterExamReview('all')">แสดงทุกข้อ (90)</button>
+          <button class="btn btn-danger" onclick="filterExamReview('wrong')">แสดงเฉพาะข้อที่ผิด / ไม่ได้ตอบ</button>
+        </div>
+      </div>
+
+      <!-- Part 1 Container -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Part 1: Multiple Choice (ข้อ 1 – 60)</div>
+          <span style="font-size:0.82rem; color:var(--text-muted);">เลือกคำตอบที่ถูกต้องที่สุดเพียงข้อเดียว (60 คะแนน)</span>
+        </div>
+        <div id="mock-part1-container"></div>
+      </div>
+
+      <!-- Part 2 Container -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Part 2: Missing Code (ข้อ 61 – 90)</div>
+          <span style="font-size:0.82rem; color:var(--text-muted);">พิมพ์โค้ด C# ที่หายไปในช่องว่าง <code>____</code> ให้ถูกต้อง (30 คะแนน)</span>
+        </div>
+        <div id="mock-part2-container"></div>
+      </div>
+
+      <div style="text-align:center; margin-top:24px;">
+        <button class="btn btn-success" style="padding:14px 32px; font-size:1.05rem;" onclick="submitMockExam()">✅ ส่งข้อสอบทั้งหมด (90 ข้อ)</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+// ============================================================================
+// 1. STATE & LOCALSTORAGE MANAGEMENT
+// ============================================================================
+const STORAGE_KEY = 'csharp_exam_tutor_v1';
+
+const defaultState = {
+  completedChapters: { loop: false, method: false, array: false, class: false },
+  flippedCards: {},
+  chapterQuizScores: {},
+  checklist: {},
+  errorLogs: [
+    { id: 1, topic: 'Method', title: 'ลืมใส่ return ใน Method ที่ไม่ใช่ void', note: 'หากหัว Method ระบุชนิดข้อมูลเช่น int, double, string หรือ int[] ทุกเงื่อนไขต้องมีคำสั่ง return ค่าชนิดนั้นกลับเสมอ' },
+    { id: 2, topic: 'Array', title: 'ใช้ Index เกินขนาด Array (i <= arr.Length)', note: 'Index เริ่มที่ 0 และจบที่ Length - 1 เสมอ ในลูป for ต้องใช้ i < arr.Length' },
+    { id: 3, topic: 'Class', title: 'สับสนระหว่าง get และ set ใน Property', note: 'get ใช้คืนค่า field (return field;) ส่วน set ใช้รับค่าใหม่มาเก็บลง field โดยใช้คีย์เวิร์ด value (field = value;)' }
+  ],
+  lastMockScore: null
+};
+
+let appState = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(defaultState));
+    const parsed = JSON.parse(raw);
+    return { ...JSON.parse(JSON.stringify(defaultState)), ...parsed };
+  } catch (e) {
+    return JSON.parse(JSON.stringify(defaultState));
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+  updateDashboardStats();
+}
+
+function resetAllProgress() {
+  if (confirm('ต้องการรีเซ็ตข้อมูลความคืบหน้า Checklist และคะแนนทั้งหมดหรือไม่?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    appState = JSON.parse(JSON.stringify(defaultState));
+    renderChecklists();
+    renderErrorLogs();
+    updateDashboardStats();
+    alert('รีเซ็ตข้อมูลเรียบร้อยแล้ว');
+  }
+}
+
+// ============================================================================
+// 2. NAVIGATION & SEARCH
+// ============================================================================
+function navigateTo(sectionId) {
+  document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+  const targetSec = document.getElementById(sectionId);
+  if (targetSec) targetSec.classList.add('active');
+
+  const navItem = document.querySelector(`.nav-item[data-target="${sectionId}"]`);
+  if (navItem) navItem.classList.add('active');
+
+  document.getElementById('sidebar').classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function copyCode(btn) {
+  const pre = btn.closest('.code-wrapper').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    const orig = btn.innerText;
+    btn.innerText = 'คัดลอกแล้ว!';
+    setTimeout(() => btn.innerText = orig, 1500);
+  });
+}
+
+// Search Index
+const searchIndex = [
+  { title: 'Pretest vs Posttest Loop', sec: 'sec-loop', snippet: 'for, while, foreach เช็กเงื่อนไขก่อน (0..N รอบ) ส่วน do..while ทำก่อน 1 รอบเสมอ' },
+  { title: 'Components of Loop (START, STOP, STEP)', sec: 'sec-loop', snippet: 'Initialization, Condition, Updating step และสาเหตุของ Infinite Loop' },
+  { title: 'Jump Statement: break & continue', sec: 'sec-loop', snippet: 'break ออกจากลูปทันที, continue ข้ามรอบปัจจุบันไปรอบถัดไป' },
+  { title: 'Nested Loop (ลูปซ้อนลูป)', sec: 'sec-loop', snippet: 'ลูปในทำงานครบทุกรอบก่อน ลูปนอกจึงขยับ 1 รอบ' },
+  { title: 'โครงสร้าง Method 5 ส่วน', sec: 'sec-method', snippet: 'Modifier, Return type, Method name, Parameters, Method body (อยู่นอก Main)' },
+  { title: 'ประเภทของ Method 4 รูปแบบ', sec: 'sec-method', snippet: 'No param/No return, No param/Return, Param/No return, Param/Return' },
+  { title: 'Parameter vs Argument และ Return', sec: 'sec-method', snippet: 'Parameter รับค่าที่หัวเมธอด, Argument ส่งค่าตอนเรียกใช้' },
+  { title: 'Array 1 มิติ & Index 0 ถึง Length - 1', sec: 'sec-array', snippet: 'การประกาศ int[] arr = new int[5]; และข้อควรระวัง IndexOutOfRangeException' },
+  { title: 'ส่ง Array เข้าและออกจาก Method', sec: 'sec-array', snippet: 'ส่งทั้งอาร์เรย์ Summation(arr) และคืนค่าอาร์เรย์ public static int[] SetNumber()' },
+  { title: 'Array 2 มิติ: GetLength(0), GetLength(1), Rank', sec: 'sec-array', snippet: 'GetLength(0) คืนจำนวนแถว, GetLength(1) คืนจำนวนคอลัมน์, Rank คืนจำนวนมิติ' },
+  { title: 'Class & Object (Blueprint vs Instance)', sec: 'sec-class', snippet: 'การสร้าง Object ด้วย new เช่น Student s1 = new Student();' },
+  { title: 'Encapsulation, Modifier (public / private)', sec: 'sec-class', snippet: 'public (+) เข้าถึงได้ทุกคลาส, private (-) เข้าถึงได้เฉพาะในคลาสเดียวกัน' },
+  { title: 'Field & Property (get / set / value)', sec: 'sec-class', snippet: 'Backing field และการใช้ get, set พร้อมคีย์เวิร์ด value และ Auto-implemented { get; set; }' },
+  { title: 'Constructor & Constructor Overloading', sec: 'sec-class', snippet: 'ชื่อเหมือน Class ไม่มี return type ทำงานอัตโนมัติเมื่อ new Object' },
+  { title: 'Array of Class', sec: 'sec-class', snippet: 'Person[] p = new Person[3]; ต้อง new Person() ให้แต่ละ index ก่อนใช้งาน' },
+  { title: 'Code Tracing ฝึกอ่านโค้ด', sec: 'sec-tracing', snippet: 'ตารางไล่ค่าตัวแปรทีละรอบ 6 โจทย์จากง่ายไปยาก' },
+  { title: 'Cheat Sheet สรุปก่อนสอบ', sec: 'sec-cheatsheet', snippet: 'รวม Syntax สำคัญทั้ง 4 บท และ 8 จุดพลาดที่พบบ่อย' },
+  { title: 'Mock Exam 90 ข้อ', sec: 'sec-mock', snippet: 'ข้อสอบจำลอง 60 Multiple Choice + 30 Missing Code พร้อมเฉลยละเอียด' }
+];
+
+function handleSearch(query) {
+  const box = document.getElementById('search-results');
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    box.style.display = 'none';
+    return;
+  }
+  const matches = searchIndex.filter(item =>
+    item.title.toLowerCase().includes(q) || item.snippet.toLowerCase().includes(q)
+  );
+  if (matches.length === 0) {
+    box.innerHTML = `<div class="search-result-item"><div class="search-result-snippet">ไม่พบคำค้นหา "${query}"</div></div>`;
+  } else {
+    box.innerHTML = matches.map(m => `
+      <div class="search-result-item" onclick="navigateTo('${m.sec}'); document.getElementById('search-results').style.display='none';">
+        <div class="search-result-title">${m.title}</div>
+        <div class="search-result-snippet">${m.snippet}</div>
+      </div>
+    `).join('');
+  }
+  box.style.display = 'block';
+}
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-container')) {
+    document.getElementById('search-results').style.display = 'none';
+  }
+});
+
+// ============================================================================
+// 3. STUDY PLAN CHECKLIST & PROGRESS
+// ============================================================================
+const day1Tasks = [
+  { id: 'd1_1', text: 'ทบทวนบทที่ 1: Loop (Pretest vs Posttest, break/continue, Nested Loop)' },
+  { id: 'd1_2', text: 'เรียนบทที่ 2: Method อย่างละเอียด (ทั้ง 4 รูปแบบ, Parameter, Return)' },
+  { id: 'd1_3', text: 'เรียนบทที่ 3: Array อย่างละเอียด (1D, 2D, GetLength, ส่ง Array เข้า/ออก Method)' },
+  { id: 'd1_4', text: 'เรียนบทที่ 4: Class & OOP (Field, Property get/set, Constructor, Array of Class)' },
+  { id: 'd1_5', text: 'ฝึกอ่านโค้ดและไล่ค่าตัวแปรในหน้า Code Tracing Lab' },
+  { id: 'd1_6', text: 'ทำแบบฝึกหัดท้ายบทครบทั้ง 4 บท (16 ข้อ)' }
+];
+
+const day2Tasks = [
+  { id: 'd2_1', text: 'ทบทวน Flashcards ความจำทั้งหมด 6 ใบ' },
+  { id: 'd2_2', text: 'ทบทวนโจทย์แบบผสมหลายบท (Loop + Method + Array + Class)' },
+  { id: 'd2_3', text: 'ฝึกเขียนเติมโค้ดที่หายไป (Missing Code)' },
+  { id: 'd2_4', text: 'ทำ Mock Exam จำลองข้อสอบจริงครบ 90 ข้อ (จับเวลา 90 นาที)' },
+  { id: 'd2_5', text: 'ตรวจข้อผิดพลาดและบันทึกลง Error Log ส่วนตัว' },
+  { id: 'd2_6', text: 'อ่านทบทวนหน้า Cheat Sheet สรุปก่อนเข้าห้องสอบ' }
+];
+
+function renderChecklists() {
+  const renderList = (tasks, containerId) => {
+    const el = document.getElementById(containerId);
+    el.innerHTML = tasks.map(t => {
+      const checked = !!appState.checklist[t.id];
+      return `
+        <label class="checklist-item ${checked ? 'checked' : ''}">
+          <input type="checkbox" ${checked ? 'checked' : ''} onchange="toggleChecklist('${t.id}', this.checked)">
+          <span>${t.text}</span>
+        </label>
+      `;
+    }).join('');
+  };
+  renderList(day1Tasks, 'checklist-day1');
+  renderList(day2Tasks, 'checklist-day2');
+}
+
+function toggleChecklist(id, isChecked) {
+  appState.checklist[id] = isChecked;
+  saveState();
+  renderChecklists();
+}
+
+function toggleChapterComplete(chap) {
+  appState.completedChapters[chap] = !appState.completedChapters[chap];
+  saveState();
+}
+
+function flipCard(fcId) {
+  const el = document.getElementById(fcId);
+  el.classList.toggle('visible');
+  appState.flippedCards[fcId] = true;
+  saveState();
+}
+
+function updateDashboardStats() {
+  const chaps = ['loop', 'method', 'array', 'class'];
+  let doneChaps = 0;
+  chaps.forEach(c => {
+    const isDone = !!appState.completedChapters[c];
+    if (isDone) doneChaps++;
+    const badge = document.getElementById(`badge-${c}`);
+    const nav = document.querySelector(`.nav-item[data-target="sec-${c}"]`);
+    const btn = document.getElementById(`btn-complete-${c}`);
+    if (badge) badge.innerText = isDone ? 'จบแล้ว ✓' : 'เรียน';
+    if (nav) nav.classList.toggle('done', isDone);
+    if (btn) btn.innerText = isDone ? '✓ เรียนจบบทนี้แล้ว (คลิกเพื่อยกเลิก)' : `✓ ทำเครื่องหมายว่าเรียนจบบทนี้`;
+  });
+
+  const fcCount = Object.keys(appState.flippedCards).length;
+  const quizCorrectTotal = Object.values(appState.chapterQuizScores).reduce((a, b) => a + b, 0);
+  const checkDone = Object.values(appState.checklist).filter(Boolean).length;
+
+  document.getElementById('stat-chapters').innerText = `${doneChaps} / 4`;
+  document.getElementById('stat-fc').innerText = `${Math.min(fcCount, 6)} / 6`;
+  document.getElementById('stat-quiz').innerText = `${quizCorrectTotal} / 16`;
+  document.getElementById('stat-mock').innerText = appState.lastMockScore !== null ? `${appState.lastMockScore} / 90` : '- / 90';
+  document.getElementById('badge-plan').innerText = `${checkDone}/12`;
+  document.getElementById('badge-err').innerText = appState.errorLogs.length;
+
+  // Overall progress calculation
+  const totalPoints = 4 + 6 + 16 + 12; // 38 milestones
+  const earned = doneChaps + Math.min(fcCount, 6) + quizCorrectTotal + checkDone;
+  const pct = Math.round((earned / totalPoints) * 100);
+  document.getElementById('overall-pct').innerText = `${pct}%`;
+  document.getElementById('overall-bar').style.width = `${pct}%`;
+}
+
+// ============================================================================
+// 4. CHAPTER QUIZZES (4 QUESTIONS PER CHAPTER = 16 QUESTIONS)
+// ============================================================================
+const chapterQuizzes = {
+  loop: [
+    {
+      q: '1. ลูปใดจัดเป็น Posttest Loop ที่รับประกันว่าคำสั่งภายในลูปจะทำงานอย่างน้อย 1 รอบเสมอแม้เงื่อนไขเป็นเท็จตั้งแต่แรก?',
+      opts: ['for loop', 'while loop', 'do...while loop', 'foreach loop'],
+      ans: 2,
+      exp: 'do...while เป็น Posttest Loop จะทำงานในบล็อก do ก่อน 1 รอบแล้วจึงตรวจสอบเงื่อนไขท้ายลูป'
+    },
+    {
+      q: '2. ผลลัพธ์ของโค้ด: for (int i = 1; i <= 5; i++) { if (i == 3) continue; Console.Write(i); } คือข้อใด?',
+      opts: ['12', '12345', '1245', '123'],
+      ans: 2,
+      exp: 'เมื่อ i == 3 คำสั่ง continue จะข้าม Console.Write(i) ในรอบนั้นแล้วไปทำ i++ ต่อ จึงพิมพ์ 1245'
+    },
+    {
+      q: '3. ข้อใดเป็นสาเหตุที่ทำให้เกิด Infinite Loop ในโค้ด: int i = 1; while (i <= 10) { Console.WriteLine(i); } ?',
+      opts: ['ขาด Initialization (START)', 'ขาด Condition (STOP)', 'ขาด Counter/Updating step (STEP)', 'ใช้ชนิดข้อมูลผิด'],
+      ans: 2,
+      exp: 'ไม่มีคำสั่งปรับค่า i (เช่น i++) ทำให้ i เป็น 1 ตลอดกาลและเงื่อนไข i <= 10 เป็นจริงเสมอ'
+    },
+    {
+      q: '4. ใน Nested Loop: for (int r = 1; r <= 3; r++) { for (int c = 1; c <= 4; c++) { Console.Write("*"); } } เครื่องหมาย * จะถูกพิมพ์ทั้งหมดกี่ตัว?',
+      opts: ['7 ตัว', '12 ตัว', '3 ตัว', '4 ตัว'],
+      ans: 1,
+      exp: 'จำนวนรอบรวมของ Nested Loop = รอบลูปนอก (3) × รอบลูปใน (4) = 12 รอบ'
+    }
+  ],
+  method: [
+    {
+      q: '1. ข้อใดกล่าวถูกต้องเกี่ยวกับตำแหน่งการประกาศ User-Defined Method ในภาษา C#?',
+      opts: ['ต้องประกาศไว้ภายใน Main() เท่านั้น', 'ต้องประกาศไว้นอก Main() แต่อยู่ภายใน Class', 'ต้องประกาศไว้หลังปีกกาปิดของ Class', 'ประกาศตรงไหนก็ได้ในไฟล์'],
+      ans: 1,
+      exp: 'Method ต้องประกาศไว้นอก Main() แต่อยู่ภายในขอบเขตของ Class เดียวกัน'
+    },
+    {
+      q: '2. หาก Method ต้องการรับค่าชื่อ (string) และอายุ (int) มาแสดงผลบนหน้าจอโดยไม่ส่งค่าใดๆ กลับ ควรประกาศหัว Method อย่างไร?',
+      opts: ['public static void Show(string name, int age)', 'public static int Show(string name, int age)', 'public static void Show()', 'public static string Show(name, age)'],
+      ans: 0,
+      exp: 'ไม่ส่งค่ากลับใช้ Return Type เป็น void และรับพารามิเตอร์ 2 ตัวคือ string name, int age'
+    },
+    {
+      q: '3. พิจารณาหัวเมธอด: public static double Calc(int x, double y) การเรียกใช้ในข้อใดถูกต้อง?',
+      opts: ['Calc(5.5, 2);', 'int r = Calc(5, 2.0);', 'double r = Calc(5, 2.5);', 'double r = Calc(5);'],
+      ans: 2,
+      exp: 'Argument ตัวแรกต้องเป็น int (5) ตัวที่สองเป็น double (2.5) และรับค่ากลับด้วยตัวแปรชนิด double'
+    },
+    {
+      q: '4. คำสั่ง return ใน Method ที่มี Return Type เป็น int ทำหน้าที่อะไร?',
+      opts: ['ส่งค่ากลับและทำงานบรรทัดถัดไปใน Method ต่อ', 'ส่งค่าชนิด int กลับไปยังผู้เรียก และจบการทำงานของ Method ทันที', 'พิมพ์ค่าออกทางหน้าจอ Console', 'รีเซ็ตค่าตัวแปรใน Method'],
+      ans: 1,
+      exp: 'return จะส่งค่ากลับไปยังจุดที่เรียกใช้และยุติการทำงานของ Method นั้นทันที'
+    }
+  ],
+  array: [
+    {
+      q: '1. หากประกาศ int[] arr = new int[6]; สมาชิกตัวแรกและตัวสุดท้ายอยู่ที่ Index ใดตามลำดับ?',
+      opts: ['1 และ 6', '0 และ 6', '0 และ 5', '1 และ 5'],
+      ans: 2,
+      exp: 'Index ของ Array เริ่มที่ 0 เสมอ และสิ้นสุดที่ Length - 1 คือ 6 - 1 = 5'
+    },
+    {
+      q: '2. กำหนด int[,] grid = new int[4, 3]; ข้อใดให้ค่าผลลัพธ์เท่ากับ 4 (จำนวนแถว)?',
+      opts: ['grid.Length', 'grid.Rank', 'grid.GetLength(0)', 'grid.GetLength(1)'],
+      ans: 2,
+      exp: 'GetLength(0) คืนค่าขนาดมิติที่ 1 (จำนวนแถว = 4) ส่วน GetLength(1) คืนจำนวนคอลัมน์ (= 3)'
+    },
+    {
+      q: '3. หากมี Method ชื่อ public static int Sum(int[] data) และมีตัวแปร int[] scores = {10, 20, 30}; ข้อใดเรียกใช้ถูกต้อง?',
+      opts: ['Sum(scores[]);', 'Sum(int[] scores);', 'Sum(scores);', 'Sum(scores[3]);'],
+      ans: 2,
+      exp: 'การส่งทั้ง Array เข้า Method ให้ระบุเพียงชื่อตัวแปรอาร์เรย์ (scores) โดยไม่ต้องใส่ []'
+    },
+    {
+      q: '4. ข้อใดคือข้อจำกัดสำคัญของคำสั่ง foreach เมื่อใช้งานกับ Array?',
+      opts: ['ใช้กับ Array 1 มิติไม่ได้', 'ไม่สามารถใช้เปลี่ยนแปลงแก้ไขค่าสมาชิกภายใน Array โดยตรงได้', 'ทำงานช้ากว่า while loop 10 เท่า', 'ต้องกำหนดตัวแปรนับรอบ i เอง'],
+      ans: 1,
+      exp: 'ตัวแปรวนซ้ำใน foreach เป็นแบบ Read-only ไม่สามารถกำหนดค่าใหม่ให้สมาชิกใน Array ได้'
+    }
+  ],
+  class: [
+    {
+      q: '1. ข้อใดคือความหมายของคำว่า Class และ Object ใน OOP?',
+      opts: ['Class คือตัวตนจริง, Object คือแม่แบบ', 'Class คือแม่แบบ (Blueprint), Object คือตัวตนจริง (Instance) ที่สร้างด้วย new', 'Class และ Object คือสิ่งเดียวกัน', '1 Object สร้างได้หลาย Class'],
+      ans: 1,
+      exp: 'Class เป็นแม่แบบกำหนด Attributes และ Behaviors ส่วน Object คือ Instance ที่สร้างจาก Class ด้วยคำสั่ง new'
+    },
+    {
+      q: '2. ข้อใดกล่าวถูกต้องเกี่ยวกับ Constructor ของคลาส Student?',
+      opts: ['ต้องชื่อ Student และมี Return Type เป็น void', 'ต้องชื่อ Student และไม่มี Return Type ใดๆ', 'ต้องประกาศเป็น static เสมอ', '1 Class มี Constructor ได้เพียงอันเดียวเท่านั้น'],
+      ans: 1,
+      exp: 'Constructor ต้องมีชื่อเดียวกับ Class และห้ามมี Return Type (แม้แต่ void) และสามารถ Overload ได้หลายตัว'
+    },
+    {
+      q: '3. ในการเขียน Property: public string Name { get { return name; } set { name = value; } } คำว่า value หมายถึงอะไร?',
+      opts: ['ชื่อของ Class', 'ค่าที่ถูกส่งเข้ามาเพื่อกำหนดให้กับ Property นี้', 'ค่าเริ่มต้นของ string', 'ชื่อของ Method'],
+      ans: 1,
+      exp: 'value เป็นคีย์เวิร์ดใน set accessor ที่เก็บค่าที่ผู้เรียกกำหนดให้ Property นั้น'
+    },
+    {
+      q: '4. หากเขียนคำสั่ง Car[] cars = new Car[3]; แล้วเรียก cars[0].Drive(); ทันทีโดยยังไม่ทำสิ่งใด จะเกิดอะไรขึ้น?',
+      opts: ['ทำงานปกติ', 'เกิด NullReferenceException เพราะยังไม่ได้สร้าง Object ด้วย new Car() ให้แต่ละช่อง', 'พิมพ์คำว่า Drive', 'Compile Error'],
+      ans: 1,
+      exp: 'new Car[3] สร้างเพียงช่องเก็บ Reference 3 ช่องที่ยังเป็น null ต้องสั่ง cars[0] = new Car(); ก่อน'
+    }
+  ]
+};
+
+function renderChapterQuizzes() {
+  Object.keys(chapterQuizzes).forEach(chap => {
+    const container = document.getElementById(`quiz-container-${chap}`);
+    const list = chapterQuizzes[chap];
+    container.innerHTML = list.map((item, idx) => `
+      <div class="quiz-item" id="qitem-${chap}-${idx}">
+        <div style="font-weight:600; margin-bottom:8px;">${item.q}</div>
+        ${item.opts.map((opt, oIdx) => `
+          <label class="quiz-opt">
+            <input type="radio" name="q-${chap}-${idx}" value="${oIdx}"> ${opt}
+          </label>
+        `).join('')}
+        <div class="quiz-feedback" id="qfb-${chap}-${idx}"></div>
+      </div>
+    `).join('');
+  });
+}
+
+function checkChapterQuiz(chap) {
+  const list = chapterQuizzes[chap];
+  let correct = 0;
+  list.forEach((item, idx) => {
+    const selected = document.querySelector(`input[name="q-${chap}-${idx}"]:checked`);
+    const fb = document.getElementById(`qfb-${chap}-${idx}`);
+    fb.style.display = 'block';
+    if (selected && parseInt(selected.value) === item.ans) {
+      correct++;
+      fb.style.background = 'rgba(16, 185, 129, 0.15)';
+      fb.style.border = '1px solid var(--accent-emerald)';
+      fb.style.color = '#a7f3d0';
+      fb.innerHTML = `✅ <strong>ถูกต้อง!</strong> ${item.exp}`;
+    } else {
+      fb.style.background = 'rgba(244, 63, 94, 0.15)';
+      fb.style.border = '1px solid var(--accent-rose)';
+      fb.style.color = '#fecdd3';
+      fb.innerHTML = `❌ <strong>ยังไม่ถูก</strong> — คำตอบที่ถูกคือ: <u>${item.opts[item.ans]}</u><br>${item.exp}`;
+    }
+  });
+  appState.chapterQuizScores[chap] = correct;
+  saveState();
+}
+
+// ============================================================================
+// 5. CODE TRACING LAB (6 PROGRESSIVE PROBLEMS WITH TRACE TABLES)
+// ============================================================================
+const tracingProblems = [
+  {
+    level: 'ระดับ 1: ง่าย (Loop + Accumulator)',
+    title: 'โจทย์ที่ 1: การสะสมค่าใน while loop และเงื่อนไขคู่/คี่',
+    code: `int i = 1, sum = 0;
+while (i <= 5) {
+    if (i % 2 == 1) {
+        sum += i;
+    }
+    i++;
+}
+Console.WriteLine("sum = " + sum + ", i = " + i);`,
+    output: 'sum = 9, i = 6',
+    traceHeaders: ['รอบที่', 'i ก่อนเช็ก', 'i <= 5 ?', 'i % 2 == 1 ?', 'sum หลังทำงาน', 'i หลัง i++'],
+    traceRows: [
+      ['1', '1', 'True', 'True (1)', '0 + 1 = 1', '2'],
+      ['2', '2', 'True', 'False (0)', '1 (คงเดิม)', '3'],
+      ['3', '3', 'True', 'True (1)', '1 + 3 = 4', '4'],
+      ['4', '4', 'True', 'False (0)', '4 (คงเดิม)', '5'],
+      ['5', '5', 'True', 'True (1)', '4 + 5 = 9', '6'],
+      ['จบ', '6', 'False -> ออกลูป', '-', '9', '6']
+    ],
+    explanation: 'ลูปบวกเฉพาะเลขคี่ (1 + 3 + 5 = 9) และสังเกตว่าค่า i สุดท้ายหลังออกจากลูปคือ 6 (ไม่ใช่ 5) เพราะต้องบวกเป็น 6 ก่อนจึงทำให้เงื่อนไข i <= 5 เป็นเท็จ'
+  },
+  {
+    level: 'ระดับ 2: ง่าย-ปานกลาง (Nested Loop)',
+    title: 'โจทย์ที่ 2: ลูปซ้อนลูปและการคำนวณผลคูณ',
+    code: `int count = 0;
+for (int i = 1; i <= 3; i++) {
+    for (int j = 3; j >= i; j--) {
+        count++;
+    }
+}
+Console.WriteLine(count);`,
+    output: '6',
+    traceHeaders: ['i (ลูปนอก)', 'ค่า j ที่ทำงาน (j >= i)', 'จำนวนรอบลูปใน', 'ค่า count สะสม'],
+    traceRows: [
+      ['i = 1', 'j = 3, 2, 1', '3 รอบ', '3'],
+      ['i = 2', 'j = 3, 2', '2 รอบ', '3 + 2 = 5'],
+      ['i = 3', 'j = 3', '1 รอบ', '5 + 1 = 6'],
+      ['i = 4', 'i <= 3 เป็น False', 'จบการทำงาน', '6']
+    ],
+    explanation: 'ลูปในเริ่มจาก j = 3 ลดลงเรื่อยๆ จนถึง i ทำให้แต่ละรอบของ i ลูปในทำงาน 3, 2 และ 1 รอบตามลำดับ รวมเป็น 6'
+  },
+  {
+    level: 'ระดับ 3: ปานกลาง (Method Pass by Value vs Return)',
+    title: 'โจทย์ที่ 3: การเรียกใช้ Method ซ้อนกันและการคืนค่า',
+    code: `public static void Main() {
+    int a = 4, b = 3;
+    a = Process(a, b);
+    Console.WriteLine(a + " " + b);
+}
+public static int Process(int x, int y) {
+    x = x + y;
+    y = y * 2;
+    return x;
+}`,
+    output: '7 3',
+    traceHeaders: ['ขั้นตอน', 'a (Main)', 'b (Main)', 'x (Process)', 'y (Process)'],
+    traceRows: [
+      ['เริ่มต้น Main', '4', '3', '-', '-'],
+      ['เรียก Process(4, 3)', '4', '3', '4', '3'],
+      ['x = x + y; y = y * 2;', '4', '3', '7', '6'],
+      ['return x (7) กลับให้ a', '7', '3', '(คืนหน่วยความจำ)', '(คืนหน่วยความจำ)']
+    ],
+    explanation: 'b ใน Main ถูกส่งแบบ Pass by Value ดังนั้นแม้ y ใน Process จะเปลี่ยนเป็น 6 แต่ b ใน Main ยังคงเป็น 3 ส่วน a รับค่า return จาก x จึงเปลี่ยนเป็น 7'
+  },
+  {
+    level: 'ระดับ 4: ปานกลาง-ยาก (Array + Method Reference)',
+    title: 'โจทย์ที่ 4: การส่ง Array เข้า Method และการแก้ไขค่าใน Array',
+    code: `public static void Main() {
+    int[] data = { 2, 4, 6, 8 };
+    Modify(data);
+    Console.WriteLine(data[1] + data[3]);
+}
+public static void Modify(int[] arr) {
+    for (int i = 0; i < arr.Length; i++) {
+        if (i % 2 == 1) arr[i] += 5;
+    }
+}`,
+    output: '22',
+    traceHeaders: ['i', 'arr[i] ก่อนแก้', 'i % 2 == 1 ?', 'arr[i] หลังแก้', 'สถานะ array data'],
+    traceRows: [
+      ['0', '2', 'False', '2', '{ 2, 4, 6, 8 }'],
+      ['1', '4', 'True', '4 + 5 = 9', '{ 2, 9, 6, 8 }'],
+      ['2', '6', 'False', '6', '{ 2, 9, 6, 8 }'],
+      ['3', '8', 'True', '8 + 5 = 13', '{ 2, 9, 6, 13 }']
+    ],
+    explanation: 'Array เป็น Reference Type เมื่อส่ง data เข้า Modify(arr) การแก้ไข arr[1] และ arr[3] จะส่งผลต่อ data โดยตรง ดังนั้น data[1] + data[3] = 9 + 13 = 22'
+  },
+  {
+    level: 'ระดับ 5: ยาก (2D Array + GetLength)',
+    title: 'โจทย์ที่ 5: การบวกแนวทแยงมุมใน Array 2 มิติ',
+    code: `int[,] mat = {
+    { 1, 2, 3 },
+    { 4, 5, 6 },
+    { 7, 8, 9 }
+};
+int diag = 0;
+for (int r = 0; r < mat.GetLength(0); r++) {
+    for (int c = 0; c < mat.GetLength(1); c++) {
+        if (r == c) diag += mat[r, c];
+    }
+}
+Console.WriteLine(diag);`,
+    output: '15',
+    traceHeaders: ['r', 'c', 'เงื่อนไข r == c', 'สมาชิก mat[r,c]', 'diag สะสม'],
+    traceRows: [
+      ['0', '0', 'True', 'mat[0,0] = 1', '1'],
+      ['0', '1, 2', 'False', '-', '1'],
+      ['1', '1', 'True', 'mat[1,1] = 5', '1 + 5 = 6'],
+      ['2', '2', 'True', 'mat[2,2] = 9', '6 + 9 = 15']
+    ],
+    explanation: 'เงื่อนไข r == c จะเลือกเฉพาะตำแหน่ง [0,0], [1,1] และ [2,2] ซึ่งมีค่า 1 + 5 + 9 = 15'
+  },
+  {
+    level: 'ระดับ 6: ยากมาก (ผสมครบ 4 บท: Class + Constructor + Array + Loop + Method)',
+    title: 'โจทย์ที่ 6: Array of Class และการคำนวณผ่าน Property และ Method',
+    code: `public class Box {
+    public int Width { get; set; }
+    public Box(int w) { Width = w; }
+    public int DoubleWidth() { return Width * 2; }
+}
+// ใน Main():
+Box[] boxes = new Box[3];
+for (int i = 0; i < boxes.Length; i++) {
+    boxes[i] = new Box(i + 2);
+}
+int total = 0;
+foreach (Box b in boxes) {
+    total += b.DoubleWidth();
+}
+Console.WriteLine(total);`,
+    output: '18',
+    traceHeaders: ['Index / รอบ', 'Object ที่สร้าง', 'ค่า Width', 'b.DoubleWidth()', 'total สะสม'],
+    traceRows: [
+      ['i = 0', 'new Box(0 + 2)', '2', '4', '4'],
+      ['i = 1', 'new Box(1 + 2)', '3', '6', '4 + 6 = 10'],
+      ['i = 2', 'new Box(2 + 2)', '4', '8', '10 + 8 = 18']
+    ],
+    explanation: 'ลูปแรกสร้าง Box 3 ชิ้นที่มี Width เป็น 2, 3, 4 ตามลำดับ จากนั้น foreach เรียก DoubleWidth() ได้ 4, 6, 8 และบวกรวมกันได้ 18'
+  }
+];
+
+function renderTracingLab() {
+  const container = document.getElementById('tracing-container');
+  container.innerHTML = tracingProblems.map((p, idx) => `
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">${p.title}</div>
+        <span class="nav-badge" style="color:var(--accent-amber); border-color:var(--accent-amber);">${p.level}</span>
+      </div>
+      <div class="code-wrapper">
+        <div class="code-header"><span>C# Code Tracing #${idx + 1}</span></div>
+        <pre>${escapeHtml(p.code)}</pre>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px;">
+        <input type="text" class="missing-input" style="margin-top:0; max-width:280px;" placeholder="พิมพ์ผลลัพธ์ที่คุณทำนายไว้..." id="trace-guess-${idx}">
+        <button class="btn btn-primary" onclick="toggleTraceSol(${idx})">👁️ ดูตาราง Trace และเฉลย</button>
+      </div>
+      <div id="trace-sol-${idx}" style="display:none; margin-top:16px; border-top:1px solid var(--border-color); padding-top:14px;">
+        <div class="output-box"><strong>ผลลัพธ์ที่ถูกต้อง:</strong> ${escapeHtml(p.output)}</div>
+        <p style="font-weight:600; margin:10px 0 6px; color:var(--accent-cyan);">ตารางแสดงค่าตัวแปรในแต่ละรอบ (Trace Table):</p>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead><tr>${p.traceHeaders.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+            <tbody>${p.traceRows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody>
+          </table>
+        </div>
+        <div class="callout callout-tip"><strong>อธิบายการทำงาน:</strong> ${p.explanation}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleTraceSol(idx) {
+  const el = document.getElementById(`trace-sol-${idx}`);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// ============================================================================
+// 6. ERROR LOG SYSTEM (CRUD + LOCALSTORAGE)
+// ============================================================================
+function renderErrorLogs() {
+  const container = document.getElementById('err-list-container');
+  if (appState.errorLogs.length === 0) {
+    container.innerHTML = `<p style="color:var(--text-muted);">ยังไม่มีรายการบันทึกข้อผิดพลาด เพิ่มรายการใหม่ได้จากฟอร์มด้านบน</p>`;
+    return;
+  }
+  container.innerHTML = appState.errorLogs.map(item => `
+    <div class="quiz-item" style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+      <div>
+        <span class="nav-badge" style="color:var(--accent-cyan); margin-bottom:6px; display:inline-block;">${item.topic}</span>
+        <div style="font-weight:700; font-size:1rem; margin-bottom:4px;">${escapeHtml(item.title)}</div>
+        <div style="font-size:0.88rem; color:#cbd5e1;">${escapeHtml(item.note)}</div>
+      </div>
+      <div style="display:flex; gap:6px; flex-shrink:0;">
+        <button class="btn btn-outline" style="padding:5px 10px; font-size:0.78rem;" onclick="editErrorLog(${item.id})">แก้ไข</button>
+        <button class="btn btn-danger" style="padding:5px 10px; font-size:0.78rem;" onclick="deleteErrorLog(${item.id})">ลบ</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function saveErrorLog() {
+  const editId = document.getElementById('err-edit-id').value;
+  const topic = document.getElementById('err-topic').value;
+  const title = document.getElementById('err-title').value.trim();
+  const note = document.getElementById('err-note').value.trim();
+
+  if (!title || !note) {
+    alert('กรุณากรอกหัวข้อและวิธีแก้ไขให้ครบถ้วน');
+    return;
+  }
+
+  if (editId) {
+    const idx = appState.errorLogs.findIndex(x => x.id == editId);
+    if (idx !== -1) {
+      appState.errorLogs[idx] = { id: Number(editId), topic, title, note };
+    }
+    cancelEditErrorLog();
+  } else {
+    appState.errorLogs.unshift({ id: Date.now(), topic, title, note });
+  }
+
+  document.getElementById('err-title').value = '';
+  document.getElementById('err-note').value = '';
+  saveState();
+  renderErrorLogs();
+}
+
+function editErrorLog(id) {
+  const item = appState.errorLogs.find(x => x.id === id);
+  if (!item) return;
+  document.getElementById('err-edit-id').value = item.id;
+  document.getElementById('err-topic').value = item.topic;
+  document.getElementById('err-title').value = item.title;
+  document.getElementById('err-note').value = item.note;
+  document.getElementById('err-form-title').innerText = '✏️ แก้ไขรายการข้อผิดพลาด';
+  document.getElementById('err-cancel-btn').style.display = 'inline-flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelEditErrorLog() {
+  document.getElementById('err-edit-id').value = '';
+  document.getElementById('err-title').value = '';
+  document.getElementById('err-note').value = '';
+  document.getElementById('err-form-title').innerText = '➕ เพิ่ม / แก้ไขรายการข้อผิดพลาด';
+  document.getElementById('err-cancel-btn').style.display = 'none';
+}
+
+function deleteErrorLog(id) {
+  appState.errorLogs = appState.errorLogs.filter(x => x.id !== id);
+  saveState();
+  renderErrorLogs();
+}
+
+// ============================================================================
+// 7. MOCK EXAM BANK: 60 MULTIPLE CHOICE + 30 MISSING CODE (90 UNIQUE QUESTIONS)
+// ============================================================================
+const rawPart1MC = [
+  // --- LOOP (15 Questions) ---
+  { topic: 'Loop', q: 'คำสั่งทำซ้ำกลุ่มใดจัดเป็น Conditional Iteration ตามเอกสารประกอบการเรียน?', opts: ['for และ foreach', 'while และ do...while', 'for และ while', 'do...while และ foreach'], ans: 1, exp: 'ตามแผนผัง Iteration Statements: Conditional iteration คือ do...while และ while ส่วน Definite คือ for และ Traversing collection คือ foreach' },
+  { topic: 'Loop', q: 'ความแตกต่างสำคัญที่สุดระหว่าง Pretest Loop และ Posttest Loop คือข้อใด?', opts: ['Pretest ใช้กับตัวเลขเท่านั้น Posttest ใช้กับข้อความ', 'Pretest ตรวจสอบเงื่อนไขก่อนทำงาน ส่วน Posttest ทำงานก่อน 1 รอบแล้วจึงตรวจเงื่อนไข', 'Pretest ต้องมี break เสมอ', 'Posttest ไม่สามารถเกิด Infinite Loop ได้'], ans: 1, exp: 'Pretest (for, while, foreach) เช็กเงื่อนไขก่อนทำ หากเท็จทำ 0 รอบ ส่วน Posttest (do...while) ทำก่อน 1 รอบเสมอ' },
+  { topic: 'Loop', q: 'องค์ประกอบทั้ง 3 ส่วนของ Loop (START, STOP, STEP) ตรงกับคำศัพท์ใดตามลำดับ?', opts: ['Condition, Initialization, Updating', 'Initialization, Condition, Counter/Updating step', 'Counter, Initialization, Condition', 'Initialization, Updating, Condition'], ans: 1, exp: '1. Initialization => START, 2. Condition => STOP, 3. Counter/Updating step => STEP' },
+  { topic: 'Loop', q: 'ผลลัพธ์ของโค้ดต่อไปนี้คืออะไร?\nint x = 5;\ndo {\n    Console.Write(x + " ");\n    x++;\n} while (x < 5);', opts: ['ไม่แสดงผลลัพธ์ใดๆ', '5 ', '5 6 ', 'เกิด Infinite Loop'], ans: 1, exp: 'do...while เป็น Posttest Loop จึงพิมพ์ 5 ออกมาก่อน 1 ครั้ง จากนั้น x เป็น 6 และ 6 < 5 เป็นเท็จจึงหยุด' },
+  { topic: 'Loop', q: 'โครงสร้างไวยากรณ์ (Syntax) ของคำสั่ง do...while ในภาษา C# ข้อใดถูกต้อง?', opts: ['do { ... } while (condition)', 'do { ... } while (condition);', 'do (condition) { ... } while;', 'while (condition) do { ... }'], ans: 1, exp: 'do...while ใน C# ต้องปิดท้ายด้วยเครื่องหมายเซมิโคลอน ; หลัง while (condition); เสมอ' },
+  { topic: 'Loop', q: 'ผลลัพธ์ของโค้ดต่อไปนี้คืออะไร?\nfor (int i = -3; i <= 3; i++) {\n    if (i == 0) break;\n    Console.Write(i + " ");\n}', opts: ['-3 -2 -1 0 1 2 3 ', '-3 -2 -1 ', '-3 -2 -1 1 2 3 ', '0 1 2 3 '], ans: 1, exp: 'เมื่อ i == 0 คำสั่ง break จะทำให้หลุดออกจากลูปทันที จึงพิมพ์แค่ -3 -2 -1 ' },
+  { topic: 'Loop', q: 'หากเปลี่ยนคำสั่ง break ในข้อที่แล้วเป็น continue ผลลัพธ์จะเป็นอย่างไร?\nfor (int i = -3; i <= 3; i++) {\n    if (i == 0) continue;\n    Console.Write(i + " ");\n}', opts: ['-3 -2 -1 ', '-3 -2 -1 1 2 3 ', '-3 -2 -1 0 1 2 3 ', '1 2 3 '], ans: 1, exp: 'continue จะข้ามเฉพาะรอบที่ i == 0 แล้วทำงานต่อในรอบ i = 1, 2, 3' },
+  { topic: 'Loop', q: 'เกิดอะไรขึ้นเมื่อรันโค้ดนี้?\nint i = 1;\nwhile (i <= 5) {\n    if (i == 3) continue;\n    Console.Write(i);\n    i++;\n}', opts: ['พิมพ์ 1245', 'พิมพ์ 12 แล้วเกิด Infinite Loop ค้างอยู่ที่ i = 3', 'พิมพ์ 12345', 'Compile Error'], ans: 1, exp: 'เมื่อ i == 3 คำสั่ง continue ข้ามบรรทัด i++ ทำให้ i เป็น 3 ตลอดกาลและวนซ้ำไม่รู้จบ' },
+  { topic: 'Loop', q: 'ข้อใดไม่ใช่สาเหตุของการเกิด Infinite Loop ตามสไลด์เรียน?', opts: ['ขาดส่วน START, STOP หรือ STEP', 'ลำดับของ START, STOP, STEP ไม่สอดคล้องกัน', 'ตั้งใจเขียน เช่น while(true)', 'การใช้คำสั่ง break ภายในลูป'], ans: 3, exp: 'break มีไว้เพื่อหยุดลูป (โดยเฉพาะ Infinite Loop) ไม่ใช่สาเหตุที่ทำให้เกิด Infinite Loop' },
+  { topic: 'Loop', q: 'คำสั่ง foreach ทำงานกับสมาชิกใน Array ในลำดับใด?', opts: ['จาก Index สุดท้ายย้อนกลับมา Index 0', 'สุ่มลำดับ Index', 'จาก Index 0 เพิ่มขึ้นทีละ 1 ไปจนถึง Length - 1', 'ทำเฉพาะ Index ที่เป็นเลขคู่'], ans: 2, exp: 'foreach ประมวลผลสมาชิกเรียงตาม Index จาก 0 ไปจนถึง Length - 1 เสมอ' },
+  { topic: 'Loop', q: 'โค้ดต่อไปนี้พิมพ์ตัวอักษร X ทั้งหมดกี่ตัว?\nfor (int r = 4; r >= 1; r--) {\n    for (int c = 1; c <= r; c++) {\n        Console.Write("X");\n    }\n}', opts: ['4 ตัว', '8 ตัว', '10 ตัว', '16 ตัว'], ans: 2, exp: 'รอบที่ r=4 พิมพ์ 4, r=3 พิมพ์ 3, r=2 พิมพ์ 2, r=1 พิมพ์ 1 รวม 4+3+2+1 = 10 ตัว' },
+  { topic: 'Loop', q: 'ผลลัพธ์สุดท้ายของตัวแปร sum คือเท่าไร?\nint sum = 0;\nfor (int i = 2; i <= 8; i += 2) {\n    sum += i;\n}', opts: ['12', '20', '28', '36'], ans: 1, exp: 'i มีค่า 2, 4, 6, 8 บวกรวมกันได้ 2 + 4 + 6 + 8 = 20' },
+  { topic: 'Loop', q: 'ใน Nested Loop ลำดับการทำงานที่ถูกต้องคือข้อใด?', opts: ['ลูปนอกทำงานครบทุกรอบก่อน ลูปในจึงเริ่มทำงาน', 'ลูปในทำงานครบทุกรอบก่อน ลูปนอกจึงขยับไปรอบถัดไป', 'ลูปนอกและลูปในทำงานพร้อมกันทีละ 1 รอบ', 'ขึ้นอยู่กับชนิดข้อมูลของตัวแปรนับรอบ'], ans: 1, exp: 'Nested Loop ประมวลผลจากด้านในออกด้านนอก ลูปในจะวนจนครบเงื่อนไขหยุดก่อน ลูปนอกจึงอัปเดตค่า 1 ครั้ง' },
+  { topic: 'Loop', q: 'หากต้องการเขียนลูป for ที่นับถอยหลังจาก 10 ลงมาถึง 1 ทีละ 1 ต้องเขียนส่วนหัวอย่างไร?', opts: ['for (int i = 10; i >= 1; i--)', 'for (int i = 10; i <= 1; i--)', 'for (int i = 1; i >= 10; i++)', 'for (int i = 10; i > 1; i++)'], ans: 0, exp: 'เริ่มที่ 10 (START), ทำต่อตราบที่ i >= 1 (STOP), ลดทีละ 1 ด้วย i-- (STEP)' },
+  { topic: 'Loop', q: 'ผลลัพธ์ของโค้ด: int k = 10; while (k > 20) { k--; } Console.WriteLine(k); คือข้อใด?', opts: ['9', '10', '20', '21'], ans: 1, exp: 'เงื่อนไข k > 20 เป็นเท็จตั้งแต่แรก ลูปจึงไม่ทำงานเลย ค่า k ยังคงเป็น 10' },
+
+  // --- METHOD (15 Questions) ---
+  { topic: 'Method', q: 'ข้อใดคือข้อดีหลักของการแยกโปรแกรมออกเป็น Method ย่อยๆ ตามเอกสารเรียน?', opts: ['ทำให้โปรแกรมรันได้โดยไม่ต้องมี Main()', 'แบ่งโปรแกรมให้เล็กลง อ่านเข้าใจง่าย และนำโค้ดกลับมาใช้ซ้ำได้ (Code Reuse)', 'ลดการใช้หน่วยความจำ RAM ลง 90%', 'ทำให้ไม่ต้องประกาศชนิดข้อมูลของตัวแปร'], ans: 1, exp: 'ข้อดีของ Method คือ separate a program to smaller parts, easier to read/understand, และ support code reuse' },
+  { topic: 'Method', q: 'ตามหลักการตั้งชื่อในเอกสารเรียน ชื่อของ Method ควรเป็นคำประเภทใดและขึ้นต้นอย่างไร?', opts: ['คำนาม (Noun) ขึ้นต้นด้วยตัวพิมพ์เล็ก', 'คำกริยา (Verb) แนะนำให้ขึ้นต้นด้วยตัวพิมพ์ใหญ่', 'คำคุณศัพท์ (Adjective) ตัวพิมพ์ใหญ่ทั้งหมด', 'ขึ้นต้นด้วยตัวเลขได้'], ans: 1, exp: 'Name of method should be "Verb" และ Recommend: Start with uppercase letter เช่น CalculateTax, SayHi' },
+  { topic: 'Method', q: 'องค์ประกอบทั้ง 5 ส่วนของ Method เรียงลำดับจากซ้ายไปขวาอย่างไร?', opts: ['Return_type Modifier Method_name (Parameters) { Body }', 'Modifier Return_type Method_name (Parameters) { Body }', 'Method_name Modifier Return_type (Parameters) { Body }', 'Modifier Method_name Return_type (Parameters) { Body }'], ans: 1, exp: 'รูปแบบมาตรฐานคือ Modifier return_type method_name (parameters) { Method body }' },
+  { topic: 'Method', q: 'หาก Method ไม่มีการส่งค่าใดๆ กลับไปยังจุดที่เรียกใช้ ต้องระบุ Return Type เป็นคำใด?', opts: ['null', 'empty', 'void', 'none'], ans: 2, exp: 'void ใช้ระบุว่า Method นี้ไม่คืนค่ากลับ (not return any value)' },
+  { topic: 'Method', q: 'พิจารณาโค้ด: public static int GetNumMajor() { int n = 5; return n; } จัดเป็น Method ประเภทใด?', opts: ['No parameter + No return data', 'No parameter + Return data', 'Parameter(s) + No return data', 'Parameter(s) + Return data'], ans: 1, exp: 'ในวงเล็บ () ว่างเปล่า (No parameter) และมี Return type เป็น int พร้อมคำสั่ง return n (Return data)' },
+  { topic: 'Method', q: 'พิจารณาโค้ด: public static void ShowName(string name, int age) จัดเป็น Method ประเภทใด?', opts: ['No parameter + No return data', 'No parameter + Return data', 'Parameter(s) + No return data', 'Parameter(s) + Return data'], ans: 2, exp: 'รับพารามิเตอร์ 2 ตัวคือ name และ age แต่ Return Type เป็น void (No return data)' },
+  { topic: 'Method', q: 'สิ่งใดคือความแตกต่างระหว่าง Parameter และ Argument?', opts: ['Parameter คือตัวแปรที่ประกาศตรงหัว Method ส่วน Argument คือค่าจริงที่ส่งให้ตอนเรียกใช้', 'Parameter ใช้กับ void เท่านั้น Argument ใช้กับ int เท่านั้น', 'Argument อยู่ตรงหัว Method ส่วน Parameter อยู่ตอนเรียกใช้', 'ไม่มีความแตกต่าง ใช้แทนกันได้ทุกกรณี'], ans: 0, exp: 'Parameter คือตัวแปรรับค่าในนิยามเมธอด ส่วน Argument คือข้อมูลที่ส่งเข้าไปในวงเล็บตอนเรียกใช้เมธอด' },
+  { topic: 'Method', q: 'ผลลัพธ์ของโปรแกรมนี้คืออะไร?\npublic static void Main() {\n    Console.WriteLine(Add(3, Add(2, 4)));\n}\npublic static int Add(int a, int b) {\n    return a + b;\n}', opts: ['6', '7', '9', 'Compile Error'], ans: 2, exp: 'ทำงานวงเล็บในก่อน: Add(2, 4) ได้ 6 จากนั้น Add(3, 6) ได้ 9' },
+  { topic: 'Method', q: 'ข้อใดจะทำให้เกิด Compile Error ในการเขียน Method ภาษา C#?', opts: ['มีคำสั่ง return; เปล่าๆ ในเมธอดชนิด void', 'เมธอดชนิด int แต่มีบางเส้นทางของ if-else ที่ไม่มีคำสั่ง return', 'ตั้งชื่อตัวแปรใน Main เหมือนชื่อ Parameter ใน Method', 'เรียกใช้ Method เดิมซ้ำ 3 ครั้งใน Main'], ans: 1, exp: 'เมธอดที่มี Return Type (ไม่ใช่ void) ต้องมั่นใจว่าทุกเส้นทางการทำงานมีคำสั่ง return ค่ากลับเสมอ' },
+  { topic: 'Method', q: 'ผลลัพธ์ของโค้ดนี้คืออะไร?\npublic static void Main() {\n    int n = 10;\n    Change(n);\n    Console.WriteLine(n);\n}\npublic static void Change(int n) {\n    n = 99;\n}', opts: ['10', '99', '0', 'Error'], ans: 0, exp: 'int ส่งแบบ Pass by Value การเปลี่ยนค่า n ใน Change() ไม่กระทบตัวแปร n ใน Main()' },
+  { topic: 'Method', q: 'คำสั่ง Console.WriteLine() จัดเป็น Method ประเภทใดเมื่อแบ่งตามแหล่งที่มา (By Source)?', opts: ['User-defined method', 'Built-in / Predefined method', 'Constructor method', 'Abstract method'], ans: 1, exp: 'แบ่งตาม Source มี 2 แบบคือ Built-in / Standard C# Methods (เช่น WriteLine) และ User-defined method' },
+  { topic: 'Method', q: 'หากในคลาส Program มีเมธอด public void Greet() (ไม่มีคำว่า static) จะเรียกใช้ใน static void Main() ได้อย่างไร?', opts: ['เรียก Greet(); ได้ทันที', 'ต้องสร้าง Object ก่อน เช่น Program p = new Program(); p.Greet();', 'เรียก Program.Greet();', 'ไม่สามารถเรียกใช้ได้เลย'], ans: 1, exp: 'เมธอดที่ไม่มี static เป็น Instance method ต้องสร้าง Object ของคลาสนั้นก่อนจึงจะเรียกผ่าน Object ได้' },
+  { topic: 'Method', q: 'ผลลัพธ์ของโค้ดนี้คืออะไร?\npublic static int Test(int x) {\n    if (x > 5) return x * 2;\n    return x + 1;\n}\n// เรียก Test(5)', opts: ['10', '6', '5', '11'], ans: 1, exp: 'เมื่อ x = 5 เงื่อนไข x > 5 เป็นเท็จ จึงข้ามไปทำบรรทัด return x + 1 ได้ 5 + 1 = 6' },
+  { topic: 'Method', q: 'ข้อใดคือการประกาศ Method ที่รับค่าทศนิยม 2 จำนวนและคืนค่าเฉลี่ยเป็นทศนิยม?', opts: ['public static double Avg(double a, double b) { return (a + b) / 2; }', 'public static void Avg(double a, double b) { return (a + b) / 2; }', 'public static double Avg(a, b) { return (a + b) / 2; }', 'public static int Avg(double a, double b) { return (a + b) / 2; }'], ans: 0, exp: 'Return type เป็น double และพารามิเตอร์ต้องระบุชนิดข้อมูลทั้ง a และ b' },
+  { topic: 'Method', q: 'บรรทัดใดใน Method ต่อไปนี้จะไม่มีวันถูกทำงาน (Unreachable Code)?\npublic static int Demo() {\n    int a = 5;\n    return a;\n    a = 10;\n}', opts: ['int a = 5;', 'return a;', 'a = 10;', 'ทำงานทุกบรรทัด'], ans: 2, exp: 'เมื่อถึงคำสั่ง return a; เมธอดจะจบการทำงานทันที คำสั่ง a = 10; ที่อยู่ถัดลงมาจึงไม่ถูกทำงาน' },
+
+  // --- ARRAY (15 Questions) ---
+  { topic: 'Array', q: 'ข้อใดคือนิยามที่ถูกต้องของ Array ในภาษา C#?', opts: ['กลุ่มของข้อมูลที่มีชนิดข้อมูลต่างกันได้ในตัวแปรเดียว', 'กลุ่มของข้อมูลที่มีชนิดข้อมูลเดียวกัน เข้าถึงสมาชิกผ่าน Index ที่เริ่มจาก 0', 'ตัวแปรที่เก็บได้เพียง 1 ค่าเท่านั้น', 'คำสั่งสำหรับวนลูปข้อมูล'], ans: 1, exp: 'An array is a collection of values of the same data type. Elements accessed through an index starting at 0.' },
+  { topic: 'Array', q: 'คำสั่งใดประกาศและสร้าง Array เก็บเลขจำนวนเต็มขนาด 5 ช่องได้ถูกต้อง?', opts: ['int arr = new int[5];', 'int[] arr = new int[5];', 'int[5] arr = new int[];', 'array<int> arr = new int(5);'], ans: 1, exp: 'Syntax มาตรฐานคือ DataType[] variable_name = new DataType[size];' },
+  { topic: 'Array', q: 'กำหนด int[] nums = { 15, 25, 35, 45, 55 }; ค่าของ nums[1] + nums[4] เท่ากับเท่าไร?', opts: ['40', '60', '80', '90'], ans: 2, exp: 'nums[1] คือ 25 และ nums[4] คือ 55 ดังนั้น 25 + 55 = 80' },
+  { topic: 'Array', q: 'กำหนด int[] data = new int[4]; หากยังไม่กำหนดค่าใดๆ สมาชิกแต่ละช่องจะมีค่าเริ่มต้นเป็นเท่าไร?', opts: ['null', '-1', '0', 'เกิด Error'], ans: 2, exp: 'ใน C# เมื่อสร้างอาร์เรย์ชนิดตัวเลข (int, double, float) ค่าเริ่มต้นทุกช่องจะเป็น 0 อัตโนมัติ' },
+  { topic: 'Array', q: 'ข้อใดทำให้เกิดข้อผิดพลาด IndexOutOfRangeException กับอาร์เรย์ int[] a = { 10, 20, 30 }; ?', opts: ['Console.WriteLine(a[0]);', 'Console.WriteLine(a[a.Length - 1]);', 'Console.WriteLine(a[3]);', 'Console.WriteLine(a.Length);'], ans: 2, exp: 'a มีขนาด 3 (Index 0, 1, 2) การเรียก a[3] จึงเกินขอบเขต Upper Bound (Length - 1)' },
+  { topic: 'Array', q: 'เมื่อต้องการส่งทั้งอาร์เรย์ int[] scores เข้าไปในเมธอด public static void Print(int[] arr) ต้องเรียกใช้อย่างไร?', opts: ['Print(scores[]);', 'Print(scores);', 'Print(int[] scores);', 'Print(*scores);'], ans: 1, exp: 'ส่งชื่อตัวแปรอาร์เรย์เข้าไปตรงๆ โดยไม่ต้องใส่เครื่องหมาย []' },
+  { topic: 'Array', q: 'Method สามารถคืนค่ากลับหลายค่าพร้อมกันได้ด้วยการใช้ Array ข้อใดประกาศหัว Method ที่คืนค่า Array ของ string ได้ถูกต้อง?', opts: ['public static string GetNames()', 'public static string[] GetNames()', 'public static void[] GetNames()', 'public static array GetNames()'], ans: 1, exp: 'ระบุเครื่องหมาย [] หลังชนิดข้อมูลในส่วน Return Type เช่น string[]' },
+  { topic: 'Array', q: 'กำหนด int[,] table = new int[5, 3]; ค่าของ table.Length คือเท่าไร?', opts: ['5', '3', '8', '15'], ans: 3, exp: 'Property Length ของ Array 2 มิติจะคืนจำนวนสมาชิกทั้งหมดทุกช่องรวมกัน (5 × 3 = 15)' },
+  { topic: 'Array', q: 'กำหนด int[,] table = new int[5, 3]; ค่าของ table.Rank คือเท่าไร?', opts: ['2', '3', '5', '15'], ans: 0, exp: 'Rank คืนค่าจำนวนมิติของ Array ซึ่ง [,] เป็นอาร์เรย์ 2 มิติ จึงได้ค่า 2' },
+  { topic: 'Array', q: 'กำหนด int[,] a = { {10, 20, 30}, {40, 50, 60} }; ค่าของ a[1, 2] คือข้อใด?', opts: ['20', '30', '50', '60'], ans: 3, exp: 'แถวที่ 1 (แถวล่างคือ {40, 50, 60}) คอลัมน์ที่ 2 (ตัวที่สาม) คือ 60' },
+  { topic: 'Array', q: 'ใน Array 2 มิติชื่อ matrix คำสั่ง matrix.GetLength(1) คืนค่าใด?', opts: ['จำนวนแถว (Row)', 'จำนวนคอลัมน์ (Column)', 'จำนวนมิติทั้งหมด', 'ค่าของสมาชิกตัวที่ 1'], ans: 1, exp: 'GetLength(0) คือขนาดมิติที่ 1 (จำนวนแถว) ส่วน GetLength(1) คือขนาดมิติที่ 2 (จำนวนคอลัมน์)' },
+  { topic: 'Array', q: 'ผลลัพธ์ของโค้ดต่อไปนี้คืออะไร?\nint[] a = { 2, 4, 6 };\nfor (int i = 0; i < a.Length; i++) {\n    a[i] = a[i] + i;\n}\nConsole.WriteLine(a[2]);', opts: ['6', '7', '8', '9'], ans: 2, exp: 'เมื่อ i = 2 จะได้ a[2] = a[2] + 2 = 6 + 2 = 8' },
+  { topic: 'Array', q: 'เกิดอะไรขึ้นเมื่อคอมไพล์โค้ดนี้?\nint[] nums = { 1, 2, 3 };\nforeach (int x in nums) {\n    x = x * 2;\n}', opts: ['nums กลายเป็น {2, 4, 6}', 'Compile Error เพราะไม่สามารถกำหนดค่าให้ตัวแปรวนซ้ำ x ของ foreach ได้', 'Runtime Error', 'nums กลายเป็น {1, 2, 3}'], ans: 1, exp: 'ตัวแปรใน foreach เป็น iteration variable แบบอ่านอย่างเดียว ห้ามแก้ไขค่า' },
+  { topic: 'Array', q: 'C# รองรับ Array หลายมิติ (Multidimensional Array) ได้สูงสุดกี่มิติตามเอกสารเรียน?', opts: ['2 มิติ', '3 มิติ', '16 มิติ', '32 มิติ'], ans: 3, exp: 'ตามสไลด์หน้า 31: C# supports multidimensional arrays up to 32 dimensions' },
+  { topic: 'Array', q: 'ข้อใดประกาศและกำหนดค่าเริ่มต้นให้ Array 2 มิติขนาด 2 แถว 2 คอลัมน์ได้ถูกต้อง?', opts: ['int[,] a = { {1, 2}, {3, 4} };', 'int[] a = { {1, 2}, {3, 4} };', 'int[,] a = new int[2] {1, 2, 3, 4};', 'int[2,2] a = {1, 2, 3, 4};'], ans: 0, exp: 'Array 2 มิติต้องมี [,] และจัดกลุ่มปีกกาซ้อนตามจำนวนแถวและคอลัมน์' },
+
+  // --- CLASS & MIXED (15 Questions) ---
+  { topic: 'Class', q: 'ความสัมพันธ์ระหว่าง Class และ Object ในแนวคิด OOP คือข้อใด?', opts: ['1 Object สามารถสร้างได้หลาย Class', '1 Class สามารถสร้างได้หลาย Object (1 Class : Many Objects)', 'Class ต้องสร้างด้วยคีย์เวิร์ด new', 'Object คือแม่แบบ ส่วน Class คือตัวตนจริง'], ans: 1, exp: 'Class เป็นแม่แบบ (Blueprint) และ 1 Class สามารถสร้าง Instance/Object ได้หลายตัว' },
+  { topic: 'Class', q: 'Access Modifier ใดที่อนุญาตให้เข้าถึงสมาชิกได้เฉพาะภายในคลาสเดียวกันเท่านั้น?', opts: ['public', 'private', 'static', 'global'], ans: 1, exp: 'private จำกัดการเข้าถึงเฉพาะภายในคลาสเดียวกัน (ใน UML ใช้เครื่องหมาย -)' },
+  { topic: 'Class', q: 'ใน UML Class Diagram สัญลักษณ์ + และ - หน้าชื่อตัวแปรหรือเมธอดหมายถึงอะไรตามลำดับ?', opts: ['static และ non-static', 'public และ private', 'private และ public', 'get และ set'], ans: 1, exp: '+ หมายถึง public และ - หมายถึง private (ตามสไลด์หน้า 43)' },
+  { topic: 'Class', q: 'ข้อใดคือหน้าที่ของ Backing Field ในการเขียน Class?', opts: ['เก็บข้อมูลสถานะของออบเจกต์แบบ private เพื่อเปิดให้เข้าถึงอย่างปลอดภัยผ่าน public Property', 'ใช้แทนคำสั่ง Main()', 'ใช้สำหรับวนลูปในคลาส', 'ใช้ส่งค่าออกจาก Constructor'], ans: 0, exp: 'A private field that stores the data exposed by a public property is called Backing field' },
+  { topic: 'Class', q: 'Property ในภาษา C# ประกอบด้วย Accessor 2 ตัวใดบ้าง?', opts: ['read และ write', 'input และ output', 'get และ set', 'push และ pop'], ans: 2, exp: 'Property มี 2 ส่วนคือ get accessor (อ่านค่า) และ set accessor (กำหนดค่า)' },
+  { topic: 'Class', q: 'ข้อใดคือการเขียน Auto-implemented Property แบบย่อที่ถูกต้องในภาษา C#?', opts: ['public int Age { get; set; }', 'public int Age { get(); set(); }', 'public int Age => get, set;', 'private int Age { get; set; }'], ans: 0, exp: 'รูปแบบย่อคือ public DataType PropName { get; set; }' },
+  { topic: 'Class', q: 'ข้อใดกล่าวผิดเกี่ยวกับ Constructor?', opts: ['ชื่อต้องตรงกับชื่อ Class', 'ใช้สำหรับกำหนดค่าเริ่มต้นให้ Data members เมื่อสร้าง Object', 'ต้องระบุ Return Type เป็น void เสมอ', '1 Class สามารถมี Constructor หลายตัวที่มี Parameter ต่างกันได้'], ans: 2, exp: 'Constructor ห้ามมี Return Type ใดๆ ทั้งสิ้น (แม้แต่ void ก็ห้ามใส่)' },
+  { topic: 'Class', q: 'หากในคลาส Student มีการเขียนเฉพาะ Constructor public Student(string name) โดยไม่ได้เขียน public Student() ไว้ เมื่อเขียน Student s = new Student(); จะเกิดอะไรขึ้น?', opts: ['สร้าง Object ได้ปกติโดย name เป็น null', 'เกิด Compile Error เพราะไม่มี Constructor แบบ 0 พารามิเตอร์', 'สร้าง Object ได้และ name เป็นค่าว่าง', 'เกิด Runtime Error'], ans: 1, exp: 'เมื่อเราประกาศ Constructor แบบมีพารามิเตอร์เอง คอมไพเลอร์จะไม่สร้าง Default Constructor เปล่าให้อัตโนมัติอีกต่อไป' },
+  { topic: 'Class', q: 'คำสั่งใดสร้าง Array ของออบเจกต์คลาส Person ขนาด 3 ช่องได้ถูกต้อง?', opts: ['Person[] p = new Person[3];', 'Person p[] = new Person(3);', 'Person[] p = new Person()[3];', 'Array<Person> p = new Person[3];'], ans: 0, exp: 'CLASSNAME[] VARIABLE = new CLASSNAME[size]; เช่น Person[] person = new Person[3];' },
+  { topic: 'Class', q: 'พิจารณาโค้ดผสม: คลาส Item มี public int Price { get; set; } หากสร้าง Item[] cart = { new Item{Price=10}, new Item{Price=25} }; และวน foreach บวก Price จะได้ผลลัพธ์เท่าไร?', opts: ['10', '25', '35', 'Error'], ans: 2, exp: 'cart[0].Price (10) + cart[1].Price (25) = 35' },
+  { topic: 'Class', q: 'เมื่อมีคลาส Car ที่มี public void Honk() และสร้าง Car c1 = new Car(); จะเรียกใช้เมธอด Honk อย่างไร?', opts: ['Car.Honk();', 'c1.Honk();', 'Honk(c1);', 'new Honk();'], ans: 1, exp: 'เรียกผ่านชื่อตัวแปร Object ตามด้วยจุดและชื่อเมธอด: c1.Honk();' },
+  { topic: 'Class', q: 'หากเมธอดในคลาสรับพารามิเตอร์เป็น Object เช่น void Update(Student s) { s.Score = 100; } ค่า Score ของ Object ที่ส่งเข้ามาใน Main จะเปลี่ยนหรือไม่?', opts: ['เปลี่ยนเป็น 100 เพราะ Object/Class ส่งแบบ Reference', 'ไม่เปลี่ยนเพราะส่งแบบ Value', 'เกิด Compile Error', 'เปลี่ยนเฉพาะเมื่อมีคำสั่ง return'], ans: 0, exp: 'Class เป็น Reference Type การส่ง Object เข้า Method จะอ้างอิงไปยังหน่วยความจำเดียวกัน' },
+  { topic: 'Class', q: 'ข้อใดคือความแตกต่างระหว่าง OOP และ Procedural Programming ตามสไลด์หน้า 36?', opts: ['Procedural สร้าง Instance ได้หลายตัวพร้อมกันดีกว่า OOP', 'OOP สามารถจำลองทุกอย่างในโลกเป็น Object และเหมาะกับระบบขนาดใหญ่', 'OOP ไม่สามารถใช้คำสั่ง Loop และ Array ได้', 'Procedural ใช้คำสั่ง class เป็นหลัก'], ans: 1, exp: 'OOP จำลองสิ่งต่างๆ เป็น Object และสร้างหลาย Instance ได้ ส่วน Procedural เป็นลำดับคำสั่ง ไม่เหมาะกับระบบขนาดใหญ่' },
+  { topic: 'Class', q: 'ผลลัพธ์ของโค้ดนี้คืออะไร?\npublic class Counter {\n    public int Val = 1;\n    public Counter(int step) { Val += step; }\n}\n// ใน Main:\nCounter c = new Counter(4);\nConsole.WriteLine(c.Val);', opts: ['1', '4', '5', '0'], ans: 2, exp: 'Field Val เริ่มที่ 1 เมื่อเรียก new Counter(4) คอนสตรัคเตอร์บวกเพิ่มอีก 4 ทำให้ c.Val เป็น 5' },
+  { topic: 'Class', q: 'ในคลาส Account มี private double balance; หากต้องการให้ภายนอกอ่านค่าได้แต่ห้ามแก้ไขค่าจากภายนอกโดยตรง ควรเขียน Property อย่างไร?', opts: ['public double Balance { get { return balance; } }', 'public double Balance { set { balance = value; } }', 'private double Balance { get; set; }', 'public double Balance { get; set; }'], ans: 0, exp: 'การเขียนเฉพาะ get accessor โดยไม่มี set accessor จะทำให้ Property นั้นเป็นแบบ Read-only' }
+];
+
+const rawPart2Missing = [
+  // --- LOOP & BASIC SYNTAX (8 Questions) ---
+  {
+    topic: 'Loop',
+    prompt: 'เติมคำสั่งที่หายไปเพื่อให้ลูปทำงานก่อน 1 รอบเสมอ แล้วจึงตรวจสอบเงื่อนไขว่า i <= 10',
+    code: `int i = 1;\n____\n{\n    Console.WriteLine(i);\n    i++;\n} while (i <= 10);`,
+    answers: ['do'],
+    exp: 'โครงสร้าง Posttest loop คือ do { ... } while (condition);'
+  },
+  {
+    topic: 'Loop',
+    prompt: 'เติมคำสั่ง Jump Statement เพื่อ "ข้าม" การพิมพ์เลข 5 และทำงานรอบถัดไปทันที',
+    code: `for (int i = 1; i <= 10; i++) {\n    if (i == 5) ____;\n    Console.Write(i + " ");\n}`,
+    answers: ['continue'],
+    exp: 'continue ใช้ข้ามคำสั่งที่เหลือในรอบปัจจุบันและไปทำงานรอบถัดไป'
+  },
+  {
+    topic: 'Loop',
+    prompt: 'เติมคำสั่ง Jump Statement เพื่อ "หยุดและออกจากลูปทันที" เมื่อพบค่า target',
+    code: `for (int i = 0; i < 100; i++) {\n    if (i == target) ____;\n}`,
+    answers: ['break'],
+    exp: 'break ใช้หยุดและออกจากลูปทันที'
+  },
+  {
+    topic: 'Loop',
+    prompt: 'เติมคีย์เวิร์ดของลูปสำหรับวนอ่านสมาชิกทุกตัวในอาร์เรย์ names โดยไม่ต้องใช้ตัวนับ Index',
+    code: `string[] names = { "Ann", "Bob", "Cat" };\n____ (string n in names) {\n    Console.WriteLine(n);\n}`,
+    answers: ['foreach'],
+    exp: 'foreach ใช้สำหรับวนอ่านสมาชิกใน Collection หรือ Array ทีละตัว'
+  },
+  {
+    topic: 'Loop',
+    prompt: 'เติมเงื่อนไขของลูป for เพื่อให้เข้าถึงสมาชิกทุกตัวของอาร์เรย์ arr ได้อย่างปลอดภัย (ไม่เกินขอบเขต)',
+    code: `int[] arr = { 10, 20, 30, 40 };\nfor (int i = 0; ____; i++) {\n    Console.WriteLine(arr[i]);\n}`,
+    answers: ['i < arr.Length', 'i<arr.Length', 'i <= arr.Length - 1', 'i<=arr.Length-1'],
+    exp: 'Index สุดท้ายคือ arr.Length - 1 ดังนั้นเงื่อนไขมาตรฐานคือ i < arr.Length'
+  },
+  {
+    topic: 'Loop',
+    prompt: 'เติมส่วนปรับค่าตัวแปร (STEP) เพื่อให้ลูปนับถอยหลังจาก 5 ลงมาถึง 1',
+    code: `for (int i = 5; i >= 1; ____) {\n    Console.Write(i);\n}`,
+    answers: ['i--', '--i', 'i -= 1', 'i-=1', 'i = i - 1', 'i=i-1'],
+    exp: 'การนับถอยหลังทีละ 1 ใช้ i-- หรือ i -= 1'
+  },
+  {
+    topic: 'Loop',
+    prompt: 'เติมคำสั่งในลูปซ้อนเพื่อขึ้นบรรทัดใหม่หลังจากพิมพ์เครื่องหมาย * ครบในแต่ละแถว',
+    code: `for (int r = 1; r <= 3; r++) {\n    for (int c = 1; c <= r; c++) {\n        Console.Write("*");\n    }\n    ____;\n}`,
+    answers: ['Console.WriteLine()', 'Console.WriteLine("")'],
+    exp: 'Console.WriteLine() ใช้ขึ้นบรรทัดใหม่เมื่อจบลูปในแต่ละแถว'
+  },
+  {
+    topic: 'Loop',
+    prompt: 'เติมคีย์เวิร์ด in ในโครงสร้างของคำสั่ง foreach',
+    code: `int[] scores = { 80, 90, 100 };\nforeach (int s ____ scores) {\n    Console.WriteLine(s);\n}`,
+    answers: ['in'],
+    exp: 'รูปแบบของ foreach คือ foreach (DataType varName in Collection)'
+  },
+
+  // --- METHOD (8 Questions) ---
+  {
+    topic: 'Method',
+    prompt: 'เติม Return Type ที่เหมาะสมสำหรับ Method ที่แสดงข้อความอย่างเดียวและไม่คืนค่ากลับ',
+    code: `public static ____ SayHello(string user) {\n    Console.WriteLine("Hi " + user);\n}`,
+    answers: ['void'],
+    exp: 'Method ที่ไม่ส่งค่ากลับต้องใช้ Return Type เป็น void'
+  },
+  {
+    topic: 'Method',
+    prompt: 'เติมคำสั่งเพื่อส่งผลลัพธ์ผลบวกของ a และ b กลับไปยังจุดที่เรียกใช้ Method',
+    code: `public static int Add(int a, int b) {\n    ____ a + b;\n}`,
+    answers: ['return'],
+    exp: 'ใช้คำสั่ง return เพื่อส่งค่ากลับจาก Method'
+  },
+  {
+    topic: 'Method',
+    prompt: 'เติม Return Type ของ Method ที่คำนวณและส่งค่าเฉลี่ยเป็นเลขทศนิยมกลับ',
+    code: `public static ____ Average(double x, double y) {\n    return (x + y) / 2.0;\n}`,
+    answers: ['double'],
+    exp: 'ผลลัพธ์ของ (x + y) / 2.0 เป็นชนิด double จึงต้องประกาศ Return Type เป็น double'
+  },
+  {
+    topic: 'Method',
+    prompt: 'เติมโค้ดเพื่อเรียกใช้เมธอด ShowInfo โดยส่งชื่อ "Alice" และอายุ 20 เข้าไปเป็น Argument',
+    code: `public static void Main() {\n    ____;\n}\npublic static void ShowInfo(string name, int age) {\n    Console.WriteLine(name + " : " + age);\n}`,
+    answers: ['ShowInfo("Alice", 20)', 'ShowInfo("Alice",20)'],
+    exp: 'ส่ง Argument ให้ตรงชนิดและลำดับของ Parameter คือ ("Alice", 20)'
+  },
+  {
+    topic: 'Method',
+    prompt: 'เติมคีย์เวิร์ดที่จำเป็นเพื่อให้ Main() สามารถเรียกใช้ Method Calculate() ได้โดยไม่ต้องสร้าง Object',
+    code: `public class Test {\n    public static void Main() {\n        int r = Calculate(5);\n    }\n    public ____ int Calculate(int n) {\n        return n * 10;\n    }\n}`,
+    answers: ['static'],
+    exp: 'Main เป็น static method จึงเรียกได้เฉพาะ static method ด้วยกันโดยตรง'
+  },
+  {
+    topic: 'Method',
+    prompt: 'เติมพารามิเตอร์ของเมธอด Summation เพื่อรับอาร์เรย์ของเลขจำนวนเต็มชื่อ arr',
+    code: `public static int Summation(____) {\n    int sum = 0;\n    foreach (int x in arr) sum += x;\n    return sum;\n}`,
+    answers: ['int[] arr'],
+    exp: 'การรับอาร์เรย์ทั้งชุดเป็นพารามิเตอร์ใช้รูปแบบ DataType[] paramName คือ int[] arr'
+  },
+  {
+    topic: 'Method',
+    prompt: 'เติม Return Type ของเมธอด CreateArray ที่สร้างและส่งอาร์เรย์ของ int กลับไป',
+    code: `public static ____ CreateArray() {\n    int[] data = { 1, 2, 3 };\n    return data;\n}`,
+    answers: ['int[]'],
+    exp: 'เมื่อส่งกลับตัวแปร data ที่เป็นชนิด int[] ต้องระบุ Return Type เป็น int[]'
+  },
+  {
+    topic: 'Method',
+    prompt: 'เติมคำสั่งเรียกใช้เมธอด PrintSum โดยส่งอาร์เรย์ numbers ทั้งชุดเข้าไป',
+    code: `public static void Main() {\n    int[] numbers = { 5, 10, 15 };\n    ____;\n}\npublic static void PrintSum(int[] a) { /*...*/ }`,
+    answers: ['PrintSum(numbers)'],
+    exp: 'ส่งชื่ออาร์เรย์ numbers เข้าไปตรงๆ โดยไม่ต้องใส่ []'
+  },
+
+  // --- ARRAY (7 Questions) ---
+  {
+    topic: 'Array',
+    prompt: 'เติมคำสั่งเพื่อจองหน่วยความจำให้อาร์เรย์ prices เก็บเลขทศนิยม float ได้ 10 ช่อง',
+    code: `float[] prices;\nprices = ____;`,
+    answers: ['new float[10]'],
+    exp: 'การสร้างขนาดอาร์เรย์ใช้ new DataType[size] คือ new float[10]'
+  },
+  {
+    topic: 'Array',
+    prompt: 'เติมสัญลักษณ์ที่หายไปเพื่อประกาศอาร์เรย์ 2 มิติชื่อ matrix',
+    code: `int____ matrix = new int[3, 4];`,
+    answers: ['[,]'],
+    exp: 'Array 2 มิติใน C# ใช้เครื่องหมายจุลภาคในวงเล็บเหลี่ยม [,]'
+  },
+  {
+    topic: 'Array',
+    prompt: 'เติมเมธอดเพื่อดึง "จำนวนแถว" (ขนาดมิติที่ 1) ของอาร์เรย์ 2 มิติ grid',
+    code: `int[,] grid = new int[4, 2];\nint rows = grid.____;`,
+    answers: ['GetLength(0)'],
+    exp: 'GetLength(0) คืนค่าขนาดมิติที่ 1 ซึ่งก็คือจำนวนแถว'
+  },
+  {
+    topic: 'Array',
+    prompt: 'เติมเมธอดเพื่อดึง "จำนวนคอลัมน์" (ขนาดมิติที่ 2) ของอาร์เรย์ 2 มิติ grid',
+    code: `int[,] grid = new int[4, 2];\nint cols = grid.____;`,
+    answers: ['GetLength(1)'],
+    exp: 'GetLength(1) คืนค่าขนาดมิติที่ 2 ซึ่งก็คือจำนวนคอลัมน์'
+  },
+  {
+    topic: 'Array',
+    prompt: 'เติมโค้ดเพื่อเข้าถึงสมาชิกตัวสุดท้ายของอาร์เรย์ scores โดยใช้ Property Length',
+    code: `int[] scores = { 70, 85, 92, 64 };\nint last = scores[____];`,
+    answers: ['scores.Length - 1', 'scores.Length-1'],
+    exp: 'Index สุดท้ายของ Array คือ Length - 1 เสมอ'
+  },
+  {
+    topic: 'Array',
+    prompt: 'เติมโค้ดเพื่อเข้าถึงสมาชิกแถวที่ 1 คอลัมน์ที่ 2 ของอาร์เรย์ 2 มิติ data',
+    code: `int[,] data = { {1, 2, 3}, {4, 5, 6} };\nConsole.WriteLine(data____); // ต้องพิมพ์เลข 6`,
+    answers: ['[1, 2]', '[1,2]'],
+    exp: 'ใน C# การเข้าถึง Array 2 มิติใช้ [row, col] ในวงเล็บเหลี่ยมเดียวกันคือ [1, 2]'
+  },
+  {
+    topic: 'Array',
+    prompt: 'เติม Property ที่ใช้นับจำนวนสมาชิกทั้งหมดของอาร์เรย์ items',
+    code: `string[] items = { "Pen", "Book", "Bag" };\nint count = items.____;`,
+    answers: ['Length'],
+    exp: 'Property Length คืนจำนวนสมาชิกทั้งหมดใน Array'
+  },
+
+  // --- CLASS & OOP (7 Questions) ---
+  {
+    topic: 'Class',
+    prompt: 'เติมคำสั่งเพื่อสร้าง Object ชื่อ s1 จากคลาส Student ด้วย Default Constructor',
+    code: `Student s1 = ____;`,
+    answers: ['new Student()'],
+    exp: 'การสร้าง Instance ของคลาสใช้คีย์เวิร์ด new ตามด้วย Constructor เช่น new Student()'
+  },
+  {
+    topic: 'Class',
+    prompt: 'เติม Access Modifier เพื่อให้ Field color เข้าถึงได้เฉพาะภายในคลาส Car เท่านั้น',
+    code: `public class Car {\n    ____ string color;\n}`,
+    answers: ['private'],
+    exp: 'private จำกัดสิทธิ์การเข้าถึงเฉพาะภายในคลาสเดียวกัน'
+  },
+  {
+    topic: 'Class',
+    prompt: 'เติมคีย์เวิร์ดพิเศษของ C# ใน set accessor เพื่อรับค่าที่ถูกส่งเข้ามากำหนดให้ Field name',
+    code: `public string Name {\n    get { return name; }\n    set { name = ____; }\n}`,
+    answers: ['value'],
+    exp: 'ใน set accessor ของ Property ใช้คีย์เวิร์ด value แทนค่าที่ส่งเข้ามา'
+  },
+  {
+    topic: 'Class',
+    prompt: 'เติมโค้ดเพื่อสร้าง Auto-implemented Property ชื่อ Score ชนิด int แบบอ่านและเขียนได้',
+    code: `public class Player {\n    public int Score ____\n}`,
+    answers: ['{ get; set; }', '{get; set;}', '{get;set;}'],
+    exp: 'Auto-implemented Property เขียนแบบย่อว่า { get; set; }'
+  },
+  {
+    topic: 'Class',
+    prompt: 'เติมส่วนหัวของ Constructor สำหรับคลาส Book ที่รับพารามิเตอร์ string title',
+    code: `public class Book {\n    private string title;\n    ____ {\n        title = t;\n    }\n}`,
+    answers: ['public Book(string t)', 'Book(string t)'],
+    exp: 'Constructor ต้องชื่อเหมือน Class (Book) และไม่มี Return Type'
+  },
+  {
+    topic: 'Class',
+    prompt: 'เติมโค้ดเพื่อสร้าง Object Person ในช่องที่ 0 ของ Array of Class ก่อนเรียกใช้งาน',
+    code: `Person[] people = new Person[2];\npeople[0] = ____;\npeople[0].First = "Toby";`,
+    answers: ['new Person()'],
+    exp: 'แต่ละช่องของ Array of Class ต้องถูกสร้าง Instance ด้วย new Person() ก่อนใช้งาน'
+  },
+  {
+    topic: 'Class',
+    prompt: 'เติมคำสั่งเรียกใช้เมธอด Dance() ของออบเจกต์ชื่อ toby',
+    code: `Student toby = new Student();\n____;`,
+    answers: ['toby.Dance()'],
+    exp: 'เรียกใช้ Instance Method ผ่านชื่อตัวแปร Object: toby.Dance()'
+  }
+];
+
+// Active Exam Session State
+let activePart1 = [];
+let activePart2 = [];
+let userAnswersP1 = {};
+let userAnswersP2 = {};
+let examSubmitted = false;
+let examTimerInterval = null;
+let secondsLeft = 90 * 60;
+
+function shuffleArray(arr) {
+  const copy = arr.slice();
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function startNewExam(shouldShuffle = false) {
+  if (examSubmitted === false && (Object.keys(userAnswersP1).length > 0 || Object.keys(userAnswersP2).length > 0)) {
+    if (!confirm('คุณกำลังทำข้อสอบอยู่ ต้องการเริ่มสอบใหม่และล้างคำตอบเดิมหรือไม่?')) return;
+  }
+
+  examSubmitted = false;
+  userAnswersP1 = {};
+  userAnswersP2 = {};
+  secondsLeft = 90 * 60;
+
+  document.getElementById('exam-result-panel').style.display = 'none';
+  document.getElementById('btn-submit-exam').disabled = false;
+
+  // Prepare Part 1 (60 questions)
+  let p1Source = rawPart1MC.map((item, idx) => {
+    const optObjs = item.opts.map((text, oIdx) => ({ text, isCorrect: oIdx === item.ans }));
+    const finalOpts = shouldShuffle ? shuffleArray(optObjs) : optObjs;
+    return {
+      uid: `p1_${idx}`,
+      topic: item.topic,
+      q: item.q,
+      opts: finalOpts,
+      exp: item.exp
+    };
+  });
+  activePart1 = shouldShuffle ? shuffleArray(p1Source) : p1Source;
+
+  // Prepare Part 2 (30 questions)
+  let p2Source = rawPart2Missing.map((item, idx) => ({
+    uid: `p2_${idx}`,
+    topic: item.topic,
+    prompt: item.prompt,
+    code: item.code,
+    answers: item.answers,
+    exp: item.exp
+  }));
+  activePart2 = shouldShuffle ? shuffleArray(p2Source) : p2Source;
+
+  renderMockExam();
+  updateAnsweredCount();
+  startExamTimer();
+}
+
+function startExamTimer() {
+  if (examTimerInterval) clearInterval(examTimerInterval);
+  updateTimerDisplay();
+  examTimerInterval = setInterval(() => {
+    if (examSubmitted) {
+      clearInterval(examTimerInterval);
+      return;
+    }
+    secondsLeft--;
+    if (secondsLeft <= 0) {
+      secondsLeft = 0;
+      clearInterval(examTimerInterval);
+      alert('หมดเวลาสอบ 90 นาทีแล้ว! ระบบจะส่งข้อสอบให้อัตโนมัติ');
+      submitMockExam(true);
+    }
+    updateTimerDisplay();
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  document.getElementById('exam-timer').innerText =
+    `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function renderMockExam() {
+  const letters = ['A', 'B', 'C', 'D'];
+
+  // Render Part 1
+  const p1Container = document.getElementById('mock-part1-container');
+  p1Container.innerHTML = activePart1.map((item, idx) => {
+    const qNum = idx + 1;
+    return `
+      <div class="exam-q-card" id="card-${item.uid}" data-status="pending">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <span style="font-weight:700; color:var(--accent-cyan);">ข้อที่ ${qNum} (Part 1)</span>
+          <span class="nav-badge">${item.topic}</span>
+        </div>
+        <div style="white-space:pre-wrap; margin-bottom:10px; font-size:0.94rem;">${escapeHtml(item.q)}</div>
+        <div>
+          ${item.opts.map((opt, oIdx) => `
+            <label class="quiz-opt" id="lbl-${item.uid}-${oIdx}">
+              <input type="radio" name="${item.uid}" value="${oIdx}" onchange="recordP1Answer('${item.uid}', ${oIdx})">
+              <strong>${letters[oIdx]}.</strong> <code>${escapeHtml(opt.text)}</code>
+            </label>
+          `).join('')}
+        </div>
+        <div class="quiz-feedback" id="fb-${item.uid}"></div>
+      </div>
+    `;
+  }).join('');
+
+  // Render Part 2
+  const p2Container = document.getElementById('mock-part2-container');
+  p2Container.innerHTML = activePart2.map((item, idx) => {
+    const qNum = idx + 61;
+    return `
+      <div class="exam-q-card" id="card-${item.uid}" data-status="pending">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <span style="font-weight:700; color:var(--accent-amber);">ข้อที่ ${qNum} (Part 2: Missing Code)</span>
+          <span class="nav-badge">${item.topic}</span>
+        </div>
+        <div style="margin-bottom:8px; font-size:0.93rem;">${escapeHtml(item.prompt)}</div>
+        <pre style="background:var(--code-bg); border:1px solid #263652; border-radius:8px; padding:12px; margin-bottom:8px;">${escapeHtml(item.code)}</pre>
+        <div>
+          <input type="text" class="missing-input" id="inp-${item.uid}" placeholder="พิมพ์โค้ดที่แทนที่ ____ ..." oninput="recordP2Answer('${item.uid}', this.value)">
+        </div>
+        <div class="quiz-feedback" id="fb-${item.uid}"></div>
+      </div>
+    `;
+  }).join('');
+}
+
+function recordP1Answer(uid, optIdx) {
+  if (examSubmitted) return;
+  userAnswersP1[uid] = optIdx;
+  updateAnsweredCount();
+}
+
+function recordP2Answer(uid, val) {
+  if (examSubmitted) return;
+  if (val.trim() === '') {
+    delete userAnswersP2[uid];
+  } else {
+    userAnswersP2[uid] = val;
+  }
+  updateAnsweredCount();
+}
+
+function updateAnsweredCount() {
+  const totalAns = Object.keys(userAnswersP1).length + Object.keys(userAnswersP2).length;
+  document.getElementById('exam-answered-count').innerText = totalAns;
+}
+
+function normalizeCodeAnswer(str) {
+  return str
+    .trim()
+    .replace(/;+$/, '') // allow optional trailing semicolon if user typed it
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([\(\)\[\]\{\},;=<>+\-*/])\s*/g, '$1');
+}
+
+function submitMockExam(autoSubmit = false) {
+  if (examSubmitted) return;
+  const answeredCount = Object.keys(userAnswersP1).length + Object.keys(userAnswersP2).length;
+  if (!autoSubmit && answeredCount < 90) {
+    if (!confirm(`คุณตอบไปแล้ว ${answeredCount} จาก 90 ข้อ (ยังไม่ได้ตอบ ${90 - answeredCount} ข้อ)\nยืนยันการส่งข้อสอบหรือไม่?`)) {
+      return;
+    }
+  }
+
+  examSubmitted = true;
+  if (examTimerInterval) clearInterval(examTimerInterval);
+  document.getElementById('btn-submit-exam').disabled = true;
+
+  let p1Score = 0;
+  let p2Score = 0;
+  let wrongCount = 0;
+  let unansweredCount = 0;
+  const letters = ['A', 'B', 'C', 'D'];
+
+  // Grade Part 1
+  activePart1.forEach(item => {
+    const card = document.getElementById(`card-${item.uid}`);
+    const fb = document.getElementById(`fb-${item.uid}`);
+    const radios = document.querySelectorAll(`input[name="${item.uid}"]`);
+    radios.forEach(r => r.disabled = true);
+
+    const chosenIdx = userAnswersP1[item.uid];
+    const correctIdx = item.opts.findIndex(o => o.isCorrect);
+    const correctText = `${letters[correctIdx]}. ${item.opts[correctIdx].text}`;
+
+    fb.style.display = 'block';
+    if (chosenIdx === undefined) {
+      unansweredCount++;
+      card.classList.add('unanswered-card');
+      card.dataset.status = 'wrong';
+      fb.style.background = 'rgba(245, 158, 11, 0.15)';
+      fb.style.border = '1px solid var(--accent-amber)';
+      fb.style.color = '#fde68a';
+      fb.innerHTML = `⚠️ <strong>ไม่ได้ตอบข้อนี้</strong> — เฉลยที่ถูกต้องคือ: <code>${escapeHtml(correctText)}</code><br><strong>คำอธิบาย:</strong> ${escapeHtml(item.exp)}`;
+    } else if (chosenIdx === correctIdx) {
+      p1Score++;
+      card.classList.add('correct-card');
+      card.dataset.status = 'correct';
+      fb.style.background = 'rgba(16, 185, 129, 0.15)';
+      fb.style.border = '1px solid var(--accent-emerald)';
+      fb.style.color = '#a7f3d0';
+      fb.innerHTML = `✅ <strong>ถูกต้อง!</strong> — ${escapeHtml(item.exp)}`;
+    } else {
+      wrongCount++;
+      card.classList.add('wrong-card');
+      card.dataset.status = 'wrong';
+      fb.style.background = 'rgba(244, 63, 94, 0.15)';
+      fb.style.border = '1px solid var(--accent-rose)';
+      fb.style.color = '#fecdd3';
+      fb.innerHTML = `❌ <strong>ตอบผิด</strong> (คุณเลือก ${letters[chosenIdx]}) — เฉลยที่ถูกต้องคือ: <code>${escapeHtml(correctText)}</code><br><strong>คำอธิบาย:</strong> ${escapeHtml(item.exp)}`;
+    }
+  });
+
+  // Grade Part 2
+  activePart2.forEach(item => {
+    const card = document.getElementById(`card-${item.uid}`);
+    const fb = document.getElementById(`fb-${item.uid}`);
+    const inp = document.getElementById(`inp-${item.uid}`);
+    inp.disabled = true;
+
+    const rawUser = userAnswersP2[item.uid];
+    fb.style.display = 'block';
+
+    if (!rawUser || rawUser.trim() === '') {
+      unansweredCount++;
+      card.classList.add('unanswered-card');
+      card.dataset.status = 'wrong';
+      fb.style.background = 'rgba(245, 158, 11, 0.15)';
+      fb.style.border = '1px solid var(--accent-amber)';
+      fb.style.color = '#fde68a';
+      fb.innerHTML = `⚠️ <strong>ไม่ได้ตอบข้อนี้</strong> — เฉลยที่ถูกต้องคือ: <code>${escapeHtml(item.answers[0])}</code><br><strong>คำอธิบาย:</strong> ${escapeHtml(item.exp)}`;
+    } else {
+      const normUser = normalizeCodeAnswer(rawUser);
+      const isMatch = item.answers.some(ans => normalizeCodeAnswer(ans) === normUser);
+      if (isMatch) {
+        p2Score++;
+        card.classList.add('correct-card');
+        card.dataset.status = 'correct';
+        fb.style.background = 'rgba(16, 185, 129, 0.15)';
+        fb.style.border = '1px solid var(--accent-emerald)';
+        fb.style.color = '#a7f3d0';
+        fb.innerHTML = `✅ <strong>ถูกต้อง!</strong> (คำตอบของคุณ: <code>${escapeHtml(rawUser)}</code>) — ${escapeHtml(item.exp)}`;
+      } else {
+        wrongCount++;
+        card.classList.add('wrong-card');
+        card.dataset.status = 'wrong';
+        fb.style.background = 'rgba(244, 63, 94, 0.15)';
+        fb.style.border = '1px solid var(--accent-rose)';
+        fb.style.color = '#fecdd3';
+        fb.innerHTML = `❌ <strong>ตอบผิด</strong> (คุณพิมพ์: <code>${escapeHtml(rawUser)}</code>) — เฉลยที่ถูกต้องคือ: <code>${escapeHtml(item.answers[0])}</code><br><strong>คำอธิบาย:</strong> ${escapeHtml(item.exp)}`;
+      }
+    }
+  });
+
+  const totalScore = p1Score + p2Score;
+  appState.lastMockScore = totalScore;
+  saveState();
+
+  document.getElementById('res-total').innerText = `${totalScore} / 90`;
+  document.getElementById('res-part1').innerText = `${p1Score} / 60`;
+  document.getElementById('res-part2').innerText = `${p2Score} / 30`;
+  document.getElementById('res-breakdown').innerText = `ถูก ${totalScore} | ผิด ${wrongCount} | ข้าม ${unansweredCount}`;
+
+  const resPanel = document.getElementById('exam-result-panel');
+  resPanel.style.display = 'block';
+  resPanel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function filterExamReview(mode) {
+  document.querySelectorAll('.exam-q-card').forEach(card => {
+    if (mode === 'all') {
+      card.style.display = 'block';
+    } else {
+      card.style.display = card.dataset.status === 'wrong' ? 'block' : 'none';
+    }
+  });
+}
+
+// ============================================================================
+// 8. INITIALIZATION
+// ============================================================================
+window.addEventListener('DOMContentLoaded', () => {
+  renderChecklists();
+  renderChapterQuizzes();
+  renderTracingLab();
+  renderErrorLogs();
+  startNewExam(false);
+  updateDashboardStats();
+});
+</script>
+</body>
+</html>
